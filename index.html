@@ -27,8 +27,38 @@
 
     .tagline { font-size: 0.95rem; color: #4a4a4a; margin: 0.5rem 0; letter-spacing: 0.05em; }
 
-    nav {
+    .date-nav {
       background: #f3f0e8;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      border-bottom: 1px solid #d4cfc4;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d4cfc4;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover { background: #c8a96e; color: white; }
+    .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .date-display {
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .date-big { font-size: 2.5rem; font-weight: 700; }
+    .date-small { font-size: 0.9rem; color: #888; }
+
+    nav {
+      background: white;
       padding: 1rem;
       display: flex;
       gap: 1rem;
@@ -41,17 +71,24 @@
       padding: 0.5rem 1rem;
       border: 1px solid #d4cfc4;
       background: white;
+      color: #1a1a1a;
       cursor: pointer;
       border-radius: 20px;
       font-size: 0.9rem;
       transition: all 0.2s;
     }
 
+    .filter-btn:hover { background: #f3f0e8; }
+    .filter-btn.active { background: #c8a96e; color: white; border-color: #c8a96e; }
+
     main {
       max-width: 900px;
       margin: 3rem auto;
       padding: 0 2rem;
+      animation: fadeIn 0.4s ease;
     }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     article {
       background: white;
@@ -62,12 +99,9 @@
     }
 
     .article-kicker {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
       font-size: 0.85rem;
       color: #c8a96e;
+      margin-bottom: 1rem;
     }
 
     h2 { font-size: 1.8rem; margin: 1rem 0; line-height: 1.4; }
@@ -138,6 +172,7 @@
       justify-content: center;
       font-size: 0.85rem;
       font-weight: 600;
+      flex-shrink: 0;
     }
 
     .glossary-sec {
@@ -146,6 +181,13 @@
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       margin-bottom: 2rem;
+    }
+
+    .glossary-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #1a1a1a;
     }
 
     .glossary-grid {
@@ -158,11 +200,49 @@
       padding: 1rem;
       background: #f5f5f5;
       border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .term-card:hover {
+      background: #e8ecf4;
+      border-color: #c8a96e;
+      transform: translateY(-2px);
+    }
+
+    .term-card.open {
+      background: white;
+      border-color: #c8a96e;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .term-name { font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
     .term-en { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
     .term-short { font-size: 0.9rem; color: #4a4a4a; }
+
+    .term-full {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #d4cfc4;
+      font-size: 0.9rem;
+      color: #333;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .term-card.open .term-full {
+      max-height: 300px;
+    }
+
+    .term-eg {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #e0e0e0;
+      font-style: italic;
+      color: #666;
+    }
 
     footer {
       text-align: center;
@@ -184,74 +264,176 @@
   <p class="tagline">Daily Investment Intelligence · For Beginners</p>
 </header>
 
+<div class="date-nav">
+  <button class="nav-btn" id="btnPrev" onclick="navDay(-1)">← 前一日</button>
+  <div class="date-display">
+    <div class="date-big" id="dateDisplay">26</div>
+    <div class="date-small" id="dateInfo">2026年5月</div>
+  </div>
+  <button class="nav-btn" id="btnNext" onclick="navDay(1)">後一日 →</button>
+</div>
+
 <nav>
-  <button class="filter-btn">全部</button>
-  <button class="filter-btn">📈 個股</button>
-  <button class="filter-btn">🗂 ETF</button>
-  <button class="filter-btn">🏭 產業</button>
+  <button class="filter-btn active" onclick="setFilter('all')">全部</button>
+  <button class="filter-btn" onclick="setFilter('stock')">📈 個股</button>
+  <button class="filter-btn" onclick="setFilter('etf')">🗂 ETF</button>
+  <button class="filter-btn" onclick="setFilter('industry')">🏭 產業</button>
 </nav>
 
-<main>
-  <article>
-    <div class="article-kicker">
-      <span>今日精選</span>
-    </div>
-    <h2>AI 晶片需求火爆，台股突破 43,000 點！聯發科、聯電齊漲停</h2>
-    <p class="deck">美伊地緣政治風險降溫激勵全球市場，台股加權指數今日狂飆 1,376 點至 43,644 點歷史新高。AI 半導體領軍，聯發科、聯電等權值股集體鎖漲停，市場資金風險偏好明顯提升。</p>
-
-    <div class="article-meta">
-      <span>來源：CMoney投資新聞</span> ·
-      <span>2026-05-26</span> ·
-      <span>⏱ 閱讀約 4 分鐘</span>
-    </div>
-
-    <div class="tag-list">
-      <span class="tag stock">個股</span>
-      <span class="tag industry">半導體</span>
-      <span class="tag industry">AI</span>
-    </div>
-
-    <div class="two-col">
-      <div class="section-block">
-        <div class="block-label">文章摘要</div>
-        <p>台股今日由 <strong>AI 半導體</strong> 強勢領軍，加權指數攻上歷史新高 <strong>43,644 點</strong>，漲幅達 1,376 點。<strong>IC 設計龍頭聯發科</strong> 與 <strong>代工大廠聯電</strong> 同步鎖漲停，反映市場對 AI 晶片持續旺盛需求的信心。</p>
-      </div>
-      <div class="section-block">
-        <div class="block-label">三大重點</div>
-        <ul class="kp-list">
-          <li class="kp-item"><span class="kp-num">1</span> <span>加權指數突破 43,000 點大關，創造歷史新高</span></li>
-          <li class="kp-item"><span class="kp-num">2</span> <span>AI 晶片及其供應鏈成為主升浪動力</span></li>
-          <li class="kp-item"><span class="kp-num">3</span> <span>美伊風險降溫改善全球風險偏好</span></li>
-        </ul>
-      </div>
-    </div>
-  </article>
-
-  <div class="glossary-sec">
-    <div class="glossary-grid">
-      <div class="term-card">
-        <div class="term-name">📖 AI 晶片</div>
-        <div class="term-en">AI Chip / GPU</div>
-        <div class="term-short">專門用於人工智能運算的微處理器，如 NVIDIA 的 GPU。</div>
-      </div>
-      <div class="term-card">
-        <div class="term-name">📊 加權指數</div>
-        <div class="term-en">TAIEX</div>
-        <div class="term-short">台股市場的主要指標，涵蓋所有上市公司的股價指數。</div>
-      </div>
-      <div class="term-card">
-        <div class="term-name">📈 漲停</div>
-        <div class="term-en">Daily Price Limit Up</div>
-        <div class="term-short">股票單日漲幅達上限（通常 10%），無法再往上漲。</div>
-      </div>
-    </div>
-  </div>
-
+<main id="content">
+  <!-- Content loads here -->
 </main>
 
 <footer>
-  本網站內容僅供學習參考，不構成投資建議。
+  本網站內容僅供學習參考，不構成投資建議。投資有風險，進場前請審慎評估。
 </footer>
+
+<script>
+const DAYS = ["2026-05-26","2026-05-25","2026-05-24","2026-05-23","2026-05-22"];
+const TODAY = "2026-05-26";
+
+const DATA = {
+  "2026-05-26": {
+    headline: "AI 晶片需求火爆，台股突破 43,000 點！聯發科、聯電齊漲停",
+    deck: "美伊地緣政治風險降溫激勵全球市場，台股加權指數今日狂飆 1,376 點至 43,644 點歷史新高。AI 半導體領軍，聯發科、聯電等權值股集體鎖漲停，市場資金風險偏好明顯提升。",
+    source: "CMoney投資新聞",
+    tags: [{t:"stock",l:"個股"},{t:"industry",l:"半導體"},{t:"industry",l:"AI"}],
+    summary: "台股今日由 <strong>AI 半導體</strong> 強勢領軍，加權指數攻上歷史新高 <strong>43,644 點</strong>，漲幅達 1,376 點。<strong>IC 設計龍頭聯發科</strong> 與 <strong>代工大廠聯電</strong> 同步鎖漲停，反映市場對 AI 晶片持續旺盛需求的信心。",
+    keypoints: ["加權指數突破 43,000 點大關，創造歷史新高","AI 晶片及其供應鏈成為主升浪動力","美伊風險降溫改善全球風險偏好"],
+    terms: [
+      { name: "AI 晶片", en: "AI Chip / GPU", short: "專門用於人工智能運算的微處理器。", full: "AI 晶片是專為機器學習、深度學習等 AI 運算優化的處理器。最著名的是 NVIDIA 的 GPU（圖形處理器），具有大量平行運算核心，能在短時間內處理海量資料，是 AI 訓練與推理的必備工具。", eg: "如果說 CPU 是通才，AI 晶片就是專精於複雜計算的數學天才。" },
+      { name: "加權指數", en: "TAIEX", short: "台股市場的主要指標，涵蓋所有上市公司。", full: "加權指數是台灣證券交易所編制的股價指數，涵蓋交易所上市的全部上市公司。其中權值最重的是台積電、鴻海、聯發科等大型權值股，因此這些公司股價波動會直接影響加權指數漲跌。", eg: "就像一個班級的平均成績反映全班程度，加權指數反映全台股市的整體狀況。" },
+      { name: "漲停", en: "Daily Price Limit Up", short: "股票單日漲幅達上限（通常 10%），無法再往上漲。", full: "台灣股市個股單日漲幅設有上限（漲停），當股價上漲達到上限時就會鎖漲停，無法再往上交易。漲停通常代表該股票因重大利多訊息而受追捧，或是技術面強勢突破。", eg: "就像電梯有最高樓層限制，股票單日漲幅也有上限。" }
+    ]
+  },
+  "2026-05-25": {
+    headline: "台積電法說會透露 AI 晶片訂單強勁信號",
+    deck: "台積電法說會顯示 AI 晶片客戶訂單需求遠超預期，訂單能見度延伸至 2027 年。",
+    source: "工商時報",
+    tags: [{t:"stock",l:"個股"},{t:"industry",l:"半導體"}],
+    summary: "台積電最新<strong>法說會</strong>顯示，來自 NVIDIA、AMD 等 AI 晶片客戶的需求遠超預期。公司已積極擴充產能，訂單<strong>能見度</strong>已延伸至 2027 年底，代表未來收益相對確定。",
+    keypoints: ["產能幾乎全數被預訂，供不應求格局確立","AI 晶片需求強勁","訂單能見度延伸至 2027 年"],
+    terms: [
+      { name: "法說會", en: "Investor Conference", short: "公司向投資人說明財務狀況與展望的會議。", full: "法說會是「法人說明會」的縮寫，公司每季舉辦一次，向機構投資人及散戶公開說明當季財報、未來展望與產業動態。法說會的語氣是否樂觀，往往直接影響股價表現。", eg: "就像學生每季向家長報告成績，並說明下學期的計畫和目標。" }
+    ]
+  },
+  "2026-05-24": {
+    headline: "高息 ETF 配息創新高，初學者必懂的除息與填息",
+    deck: "00878 國泰永續高股息 ETF 宣布本季每股配發 0.42 元，創設立以來新高。",
+    source: "聯合財經網",
+    tags: [{t:"etf",l:"ETF"}],
+    summary: "00878 國泰永續高股息 ETF 公告 2026 年第二季配息為每股 0.42 元，較去年同期成長 12%。高息 ETF 成為台灣散戶最熱門話題，<strong>除息</strong>、<strong>填息</strong>、<strong>殖利率</strong>等名詞成為新手必學的投資基本功。",
+    keypoints: ["00878 本季殖利率約達 5.8%","除息日前買進才有配息資格","累積型 ETF 長期複利效果更佳"],
+    terms: [
+      { name: "除息", en: "Ex-Dividend", short: "股票或 ETF 配發股利的分界點。", full: "除息是指公司或 ETF 將已宣告的股利從股價中「扣除」的那一天。除息日當天，股票開盤價會自動調降等同配息的金額。持有人若在除息日前持股，即享有配息資格。", eg: "就像你有一顆 100 元的蘋果，切下 5 元的果肉分給你（配息），剩下的蘋果就值 95 元了。" }
+    ]
+  },
+  "2026-05-23": {
+    headline: "特斯拉砍單衝擊台廠，電動車供應鏈承壓",
+    deck: "特斯拉大幅削減零組件採購，台灣電控、散熱等零組件廠首當其衝。",
+    source: "財訊雜誌",
+    tags: [{t:"industry",l:"電動車"}],
+    summary: "特斯拉宣布第三季將大幅縮減台灣供應商採購量，平均降幅達 15～30%。分析師認為，這波<strong>砍單</strong>主因是 Model 3 改款後<strong>庫存去化</strong>不順，以及中國電動車競爭加劇導致市占流失。",
+    keypoints: ["台灣供應鏈砍單幅度 15～30%","電控與散熱模組廠衝擊最大","關注庫存去化進度"],
+    terms: []
+  },
+  "2026-05-22": {
+    headline: "台股上周漲幅領先亞股，外資連續買超",
+    deck: "台股上周累計上漲 2.3%，表現領先亞股，外資連續 5 日買超。",
+    source: "鉅亨網",
+    tags: [{t:"stock",l:"個股"}],
+    summary: "台股上周表現強勁，累計上漲 2.3%，表現領先亞股平均。外資表現積極，連續 5 日買超台股，主要集中在半導體和電子權值股。",
+    keypoints: ["台股上周漲幅 2.3%","外資連續 5 日買超","半導體權值股獲主力青睞"],
+    terms: []
+  }
+};
+
+let currentDay = TODAY;
+let currentFilter = 'all';
+
+function getDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function renderDay(day) {
+  currentDay = day;
+  const data = DATA[day];
+  const date = getDate(day);
+  const idx = DAYS.indexOf(day);
+
+  document.getElementById('dateDisplay').textContent = date.getDate();
+  document.getElementById('dateInfo').textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
+  document.getElementById('btnPrev').disabled = idx === 0;
+  document.getElementById('btnNext').disabled = idx === DAYS.length - 1;
+
+  const tags = data.tags.map(t => `<span class="tag ${t.t}">${t.l}</span>`).join('');
+  const kps = data.keypoints.map((k, i) => `<li class="kp-item"><span class="kp-num">${i + 1}</span><span>${k}</span></li>`).join('');
+  const terms = data.terms.map(t => `
+    <div class="term-card" onclick="toggleTerm(this)">
+      <div class="term-name">${t.name}</div>
+      <div class="term-en">${t.en}</div>
+      <div class="term-short">${t.short}</div>
+      <div class="term-full">
+        <p>${t.full}</p>
+        <div class="term-eg">💡 ${t.eg}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('content').innerHTML = `
+    <article>
+      <div class="article-kicker">📰 今日精選</div>
+      <h2>${data.headline}</h2>
+      <p class="deck">${data.deck}</p>
+      <div class="article-meta">
+        <span>來源：${data.source}</span> · <span>${day}</span>
+      </div>
+      <div class="tag-list">${tags}</div>
+      <div class="two-col">
+        <div class="section-block">
+          <div class="block-label">文章摘要</div>
+          <p>${data.summary}</p>
+        </div>
+        <div class="section-block">
+          <div class="block-label">重點整理</div>
+          <ul class="kp-list">${kps}</ul>
+        </div>
+      </div>
+    </article>
+    ${data.terms.length > 0 ? `
+    <div class="glossary-sec">
+      <div class="glossary-title">📖 今日關鍵詞彙</div>
+      <div class="glossary-grid">${terms}</div>
+    </div>
+    ` : ''}
+  `;
+}
+
+function navDay(dir) {
+  const idx = DAYS.indexOf(currentDay);
+  const newIdx = idx + dir;
+  if (newIdx >= 0 && newIdx < DAYS.length) {
+    renderDay(DAYS[newIdx]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.includes(f === 'all' ? '全部' : f === 'stock' ? '個股' : f === 'etf' ? 'ETF' : '產業'));
+  });
+}
+
+function toggleTerm(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.term-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+renderDay(TODAY);
+</script>
 
 </body>
 </html>
