@@ -3,996 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>æè³æ¥å ± Â· æ¯æ¥ä¸å</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=DM+Serif+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <title>投資日報 · 每日一則</title>
   <style>
-    :root {
-      --ink:              #1a1a1a;
-      --ink-light:        #4a4a4a;
-      --ink-faint:        #888;
-      --paper:            #faf9f6;
-      --paper-warm:       #f3f0e8;
-      --rule:             #d4cfc4;
-      --accent:           #c8a96e;
-      --accent-dark:      #a07840;
-      --tag-stock-bg:     #e8f0e8;
-      --tag-stock-fg:     #2d6a2d;
-      --tag-etf-bg:       #e8ecf4;
-      --tag-etf-fg:       #1e3a6e;
-      --tag-industry-bg:  #f4ece8;
-      --tag-industry-fg:  #6e2e1e;
-      --highlight:        #fffbe6;
-
-      /* Font scale â 16px is the absolute floor for readable content */
-      --f-deco:  13px;   /* purely ornamental: volume tag, separator labels   */
-      --f-meta:  14px;   /* timestamps, chips, nav, tags, footer disclaimer   */
-      --f-body:  16px;   /* body text baseline                                */
-      --f-md:    17px;   /* article deck, descriptions                        */
-      --f-sub:   20px;   /* sub-headlines, section titles                     */
-      --f-head:  26px;   /* archive card headlines                            */
-      --f-hero:  34px;   /* featured article headline                         */
-      --f-date:  52px;   /* date numeral in navigator                         */
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: var(--paper);
-      color: var(--ink);
-      font-family: 'Noto Sans TC', sans-serif;
-      font-weight: 300;
-      font-size: var(--f-body);
-      line-height: 1.8;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
       min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
     }
-
-    /* âââ MASTHEAD ââââââââââââââââââââââââââââ */
-    .masthead {
-      border-bottom: 3px double var(--ink);
-      padding: 36px 0 22px;
+    .container {
       text-align: center;
+      padding: 2rem;
+      max-width: 600px;
     }
-    .masthead-vol {
-      font-size: var(--f-deco);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--ink-faint);
-      margin-bottom: 12px;
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
     }
-    .masthead-title {
-      font-family: 'DM Serif Display', 'Noto Serif TC', serif;
-      font-size: clamp(42px, 9vw, 72px);
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      margin-bottom: 10px;
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
     }
-    .masthead-title em { font-style: normal; color: var(--accent-dark); }
-    .masthead-tagline {
-      font-size: var(--f-meta);
-      letter-spacing: 0.22em;
-      color: var(--ink-light);
-      text-transform: uppercase;
+    .description {
+      font-size: 1rem;
+      margin-bottom: 3rem;
+      line-height: 1.6;
+      opacity: 0.9;
     }
-    .masthead-orn {
-      display: flex; align-items: center; gap: 16px;
-      padding: 14px 48px 0; justify-content: center;
-    }
-    .masthead-orn-line { flex: 1; max-width: 100px; height: 1px; background: var(--rule); }
-    .masthead-orn span { font-size: var(--f-deco); color: var(--accent); letter-spacing: 0.4em; }
-
-    /* âââ NAV STRIP âââââââââââââââââââââââââââ */
-    .nav-strip {
-      border-bottom: 1px solid var(--rule);
-      padding: 12px 0;
-      background: var(--paper);
-      position: sticky; top: 0; z-index: 50;
-    }
-    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
-    .nav-inner {
-      display: flex; gap: 8px; align-items: center;
-      overflow-x: auto; scrollbar-width: none;
-    }
-    .nav-inner::-webkit-scrollbar { display: none; }
-    .nav-label {
-      font-size: var(--f-deco);
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--ink-faint); white-space: nowrap; flex-shrink: 0;
-    }
-    .nav-chip {
-      padding: 5px 16px; border-radius: 20px;
-      font-size: var(--f-meta); white-space: nowrap;
-      cursor: pointer; border: 1px solid transparent;
-      transition: all 0.2s; text-decoration: none; font-weight: 400;
-      background: none; font-family: inherit;
-    }
-    .nav-chip.all      { background: var(--ink); color: var(--paper); }
-    .nav-chip.stock    { background: var(--tag-stock-bg); color: var(--tag-stock-fg); border-color: #b8d4b8; }
-    .nav-chip.etf      { background: var(--tag-etf-bg);   color: var(--tag-etf-fg);   border-color: #b8c4d8; }
-    .nav-chip.industry { background: var(--tag-industry-bg); color: var(--tag-industry-fg); border-color: #d4b8ac; }
-    .nav-chip:hover { filter: brightness(0.94); }
-    /* Active state: thicker border + slight shadow to signal selection */
-    .nav-chip.chip-active { box-shadow: 0 0 0 2px var(--ink); font-weight: 500; }
-    .nav-chip.all.chip-active { box-shadow: 0 0 0 2px #555; }
-
-    /* âââ DAY NAVIGATOR âââââââââââââââââââââââ */
-    .day-nav {
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 16px;
-      padding: 36px 0 26px;
-      border-bottom: 1px solid var(--rule);
-      margin-bottom: 40px;
-    }
-    .day-nav-btn {
-      display: flex; align-items: center; gap: 8px;
-      padding: 10px 18px;
-      border: 1px solid var(--rule); background: white;
-      cursor: pointer; font-size: var(--f-meta);
-      color: var(--ink-light); font-family: inherit;
-      letter-spacing: 0.06em; transition: all 0.18s;
-      border-radius: 2px; white-space: nowrap;
-    }
-    .day-nav-btn:hover:not(:disabled) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-    .day-nav-btn:disabled { opacity: 0.3; cursor: default; }
-    .day-nav-center { text-align: center; }
-    .day-nav-big {
-      font-family: 'DM Serif Display', serif;
-      font-size: var(--f-date); line-height: 1; font-weight: 400;
-    }
-    .day-nav-weekday {
-      font-family: 'Noto Serif TC', serif;
-      font-size: var(--f-sub); font-weight: 500; color: var(--ink);
-    }
-    .day-nav-month { font-size: var(--f-meta); color: var(--ink-faint); letter-spacing: 0.08em; margin-top: 4px; }
-    .today-pill {
+    .button {
       display: inline-block;
-      background: var(--accent); color: white;
-      font-size: var(--f-deco); letter-spacing: 0.12em;
-      padding: 2px 10px; border-radius: 2px; margin-top: 6px; font-weight: 500;
+      padding: 1rem 2rem;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      margin: 0.5rem;
     }
-
-    /* âââ ARTICLE AREA ââââââââââââââââââââââââ */
-    #article-wrap { transition: opacity 0.25s ease, transform 0.25s ease; }
-    #article-wrap.fading { opacity: 0; transform: translateY(8px); }
-
-    .article-kicker {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
-    .kicker-txt {
-      font-size: var(--f-deco); letter-spacing: 0.24em;
-      text-transform: uppercase; color: var(--accent-dark); font-weight: 500;
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+      text-align: left;
     }
-    .kicker-line { width: 36px; height: 1px; background: var(--accent); }
-
-    .article-headline {
-      font-family: 'Noto Serif TC', serif;
-      font-size: clamp(22px, 4vw, var(--f-hero));
-      font-weight: 700; line-height: 1.4;
-      margin-bottom: 14px; letter-spacing: -0.01em;
+    .feature {
+      background: rgba(255,255,255,0.1);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      backdrop-filter: blur(10px);
     }
-    .article-deck {
-      font-size: var(--f-md); color: var(--ink-light); line-height: 1.8; margin-bottom: 18px;
+    .feature h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
     }
-    .article-meta {
-      display: flex; align-items: center; flex-wrap: wrap;
-      gap: 12px; font-size: var(--f-meta); color: var(--ink-faint); margin-bottom: 22px;
-    }
-    .meta-sep { color: var(--rule); }
-
-    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
-    .tag {
-      padding: 4px 12px; border-radius: 3px;
-      font-size: var(--f-meta); font-weight: 500; letter-spacing: 0.04em;
-    }
-    .tag.stock    { background: var(--tag-stock-bg);    color: var(--tag-stock-fg); }
-    .tag.etf      { background: var(--tag-etf-bg);      color: var(--tag-etf-fg); }
-    .tag.industry { background: var(--tag-industry-bg); color: var(--tag-industry-fg); }
-
-    /* âââ TWO-COL ââââââââââââââââââââââââââââââ */
-    .two-col {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;
-    }
-    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
-
-    .section-block {
-      background: white; border: 1px solid var(--rule);
-      border-radius: 2px; padding: 24px; position: relative;
-    }
-    .section-block::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0;
-      height: 3px; background: var(--ink); border-radius: 2px 2px 0 0;
-    }
-    .block-label {
-      font-size: var(--f-deco); letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--ink-faint); margin-bottom: 16px; font-weight: 500;
-    }
-
-    .summary-text {
-      font-family: 'Noto Serif TC', serif; font-size: var(--f-body); line-height: 2;
-    }
-    .summary-text strong { font-weight: 700; border-bottom: 2px solid var(--accent); }
-
-    .kp-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-    .kp-item { display: flex; gap: 12px; align-items: flex-start; }
-    .kp-num {
-      flex-shrink: 0; width: 24px; height: 24px;
-      background: var(--ink); color: var(--paper);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: var(--f-meta); font-weight: 500; margin-top: 2px;
-    }
-    .kp-txt { font-size: var(--f-body); line-height: 1.8; color: var(--ink-light); }
-
-    /* âââ GLOSSARY ââââââââââââââââââââââââââââ */
-    .glossary-sec { margin-bottom: 40px; }
-    .glossary-hd {
-      display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px;
-    }
-    .glossary-lbl {
-      font-size: var(--f-deco); letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--ink-faint); font-weight: 500; white-space: nowrap;
-    }
-    .glossary-rule { flex: 1; height: 1px; background: var(--rule); }
-    .glossary-hint { font-size: var(--f-meta); color: var(--ink-faint); white-space: nowrap; }
-    .glossary-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px;
-    }
-
-    .term-card {
-      background: white; border: 1px solid var(--rule);
-      border-radius: 2px; padding: 20px; cursor: pointer;
-      transition: box-shadow 0.22s, transform 0.22s; position: relative; overflow: hidden;
-    }
-    .term-card::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-      height: 2px; background: var(--accent);
-      transform: scaleX(0); transition: transform 0.22s; transform-origin: left;
-    }
-    .term-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.08); transform: translateY(-2px); }
-    .term-card:hover::after, .term-card.open::after { transform: scaleX(1); }
-    .term-card.open { background: var(--highlight); border-color: var(--accent); }
-
-    .term-name { font-family: 'Noto Serif TC', serif; font-size: var(--f-sub); font-weight: 700; margin-bottom: 3px; }
-    .term-en { font-family: 'Inter', sans-serif; font-size: var(--f-deco); letter-spacing: 0.1em; color: var(--ink-faint); text-transform: uppercase; margin-bottom: 12px; }
-    .term-short { font-size: var(--f-body); color: var(--ink-light); line-height: 1.7; }
-    .term-card:not(.open) .term-short {
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .term-full { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--rule); }
-    .term-card.open .term-full { display: block; }
-    .term-full-txt { font-size: var(--f-body); line-height: 1.85; color: var(--ink); }
-    .term-eg {
-      margin-top: 10px; padding: 10px 14px;
-      background: var(--paper-warm); border-left: 3px solid var(--accent);
-      font-size: var(--f-body); color: var(--ink-light); font-style: italic; line-height: 1.75;
-    }
-    .term-hint {
-      font-size: var(--f-deco); color: var(--accent-dark);
-      margin-top: 10px; text-align: right; letter-spacing: 0.08em;
-    }
-    .term-card.open .term-hint { display: none; }
-
-    /* âââ DIVIDER ââââââââââââââââââââââââââââââ */
-    .orn { display: flex; align-items: center; gap: 18px; margin: 40px 0; }
-    .orn-line { flex: 1; height: 1px; background: var(--rule); }
-    .orn-sym { color: var(--accent); font-size: var(--f-meta); letter-spacing: 0.3em; }
-
-    /* âââ ARCHIVE ââââââââââââââââââââââââââââââ */
-    .archive-sec { margin-bottom: 60px; }
-    .archive-hd { display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px; }
-    .archive-title { font-family: 'Noto Serif TC', serif; font-size: var(--f-sub); font-weight: 700; }
-    .archive-rule { flex: 1; height: 1px; background: var(--rule); }
-
-    .archive-list { display: flex; flex-direction: column; }
-    .archive-card {
-      display: grid; grid-template-columns: 1fr auto; gap: 20px;
-      align-items: start; padding: 22px 0;
-      border-bottom: 1px solid var(--rule);
-      cursor: pointer; transition: background 0.15s, margin 0.15s, padding 0.15s;
-      border-radius: 2px; text-decoration: none; color: inherit;
-    }
-    .archive-card:hover { background: white; margin: 0 -18px; padding: 22px 18px; }
-    .archive-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-    .archive-card-hl {
-      font-family: 'Noto Serif TC', serif;
-      font-size: var(--f-head); font-weight: 500; line-height: 1.45; margin-bottom: 8px;
-    }
-    .archive-card-deck { font-size: var(--f-body); color: var(--ink-light); line-height: 1.7; }
-    .archive-card-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
-    .archive-card-date { font-size: var(--f-meta); color: var(--ink-faint); }
-    .diff {
-      display: inline-flex; align-items: center;
-      padding: 3px 10px; border-radius: 3px; font-size: var(--f-meta); font-weight: 500;
-    }
-    .diff.beginner    { background: #e8f5e8; color: #2d6a2d; }
-    .diff.intermediate { background: #fff3e0; color: #8a4500; }
-
-    /* âââ QUIZ FAB âââââââââââââââââââââââââââââ */
-    .quiz-fab {
-      position: fixed; bottom: 32px; right: 28px; z-index: 200;
-      display: flex; align-items: center; gap: 8px;
-      padding: 14px 22px;
-      background: var(--ink); color: var(--paper);
-      border: none; border-radius: 40px; cursor: pointer;
-      font-family: 'Noto Sans TC', sans-serif;
-      font-size: var(--f-body); font-weight: 500; letter-spacing: 0.04em;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-      transition: all 0.2s;
-    }
-    .quiz-fab:hover { background: #333; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
-    .quiz-fab-ico { font-size: 18px; }
-
-    /* âââ QUIZ MODAL âââââââââââââââââââââââââââ */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(26,26,26,0.55); backdrop-filter: blur(4px);
-      z-index: 300; display: flex; align-items: center; justify-content: center;
-      padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-    .modal {
-      background: var(--paper); border: 1px solid var(--rule);
-      border-radius: 4px; padding: 36px;
-      max-width: 520px; width: 100%; max-height: 88vh; overflow-y: auto;
-      transform: translateY(16px); transition: transform 0.25s; position: relative;
-    }
-    .modal-overlay.open .modal { transform: translateY(0); }
-
-    .modal-close {
-      position: absolute; top: 16px; right: 18px;
-      background: none; border: none; font-size: 22px;
-      cursor: pointer; color: var(--ink-faint); transition: color 0.15s;
-    }
-    .modal-close:hover { color: var(--ink); }
-
-    .modal-kicker { font-size: var(--f-deco); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
-    .modal-title  { font-family: 'Noto Serif TC', serif; font-size: var(--f-hero); font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
-    .modal-sub    { font-size: var(--f-body); color: var(--ink-light); line-height: 1.75; margin-bottom: 28px; }
-
-    /* Progress */
-    .quiz-prog-lbl  { font-size: var(--f-meta); color: var(--ink-faint); text-align: right; margin-bottom: 8px; }
-    .quiz-prog-bar  { height: 3px; background: var(--rule); border-radius: 2px; margin-bottom: 28px; overflow: hidden; }
-    .quiz-prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
-
-    /* Question */
-    .quiz-q-num  { font-size: var(--f-deco); letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 10px; font-weight: 500; }
-    .quiz-q-txt  { font-family: 'Noto Serif TC', serif; font-size: var(--f-sub); font-weight: 500; line-height: 1.6; margin-bottom: 6px; }
-    .quiz-eg-box {
-      background: var(--paper-warm); border-left: 3px solid var(--accent);
-      padding: 14px 18px; font-size: var(--f-body); color: var(--ink-light);
-      font-style: italic; line-height: 1.8; margin-bottom: 24px;
-    }
-    .quiz-opts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .quiz-opt {
-      padding: 14px 18px; border: 1.5px solid var(--rule);
-      background: white; border-radius: 3px; cursor: pointer;
-      font-family: 'Noto Sans TC', sans-serif; font-size: var(--f-body);
-      color: var(--ink); text-align: left; transition: all 0.18s; font-weight: 400; line-height: 1.5;
-    }
-    .quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: var(--highlight); }
-    .quiz-opt.correct { border-color: #2d6a2d; background: #e8f5e8; color: #2d6a2d; font-weight: 500; }
-    .quiz-opt.wrong   { border-color: #a03030; background: #fde8e8; color: #a03030; }
-    .quiz-opt:disabled { cursor: default; }
-
-    .quiz-fb {
-      display: none; padding: 14px 16px; border-radius: 3px;
-      font-size: var(--f-body); line-height: 1.75; margin-bottom: 20px;
-    }
-    .quiz-fb.show  { display: block; }
-    .quiz-fb.ok    { background: #e8f5e8; color: #2d6a2d; border: 1px solid #b8d4b8; }
-    .quiz-fb.fail  { background: #fde8e8; color: #a03030; border: 1px solid #d4b8b8; }
-
-    .quiz-next {
-      width: 100%; padding: 14px; background: var(--ink); color: var(--paper);
-      border: none; border-radius: 3px;
-      font-family: 'Noto Sans TC', sans-serif; font-size: var(--f-body);
-      font-weight: 500; cursor: pointer; transition: background 0.18s; display: none;
-    }
-    .quiz-next.show { display: block; }
-    .quiz-next:hover { background: #333; }
-
-    /* Result */
-    .quiz-result { text-align: center; padding: 16px 0; }
-    .quiz-emoji  { font-size: 64px; margin-bottom: 10px; }
-    .quiz-score  { font-family: 'DM Serif Display', serif; font-size: 56px; line-height: 1; color: var(--ink); margin-bottom: 4px; }
-    .quiz-score-lbl { font-size: var(--f-sub); color: var(--ink-light); margin-bottom: 20px; }
-    .quiz-result-msg { font-size: var(--f-md); line-height: 1.85; color: var(--ink); margin-bottom: 28px; }
-    .quiz-result-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .btn-outline {
-      padding: 12px 28px; border: 1.5px solid var(--ink); background: transparent;
-      border-radius: 3px; font-family: inherit; font-size: var(--f-body);
-      cursor: pointer; transition: all 0.18s;
-    }
-    .btn-outline:hover { background: var(--ink); color: var(--paper); }
-    .btn-solid {
-      padding: 12px 28px; border: none; background: var(--ink); color: var(--paper);
-      border-radius: 3px; font-family: inherit; font-size: var(--f-body);
-      cursor: pointer; transition: background 0.18s;
-    }
-    .btn-solid:hover { background: #333; }
-
-    /* âââ FOOTER âââââââââââââââââââââââââââââââ */
-    footer { border-top: 3px double var(--ink); padding: 32px 0; margin-top: 20px; }
-    .footer-inner {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; flex-wrap: wrap; gap: 20px;
-    }
-    .footer-brand { font-family: 'DM Serif Display', serif; font-size: 26px; }
-    .footer-brand em { font-style: normal; color: var(--accent-dark); }
-    .footer-note { font-size: var(--f-meta); color: var(--ink-faint); text-align: right; line-height: 1.75; }
-
-    /* âââ SCROLL REVEAL âââââââââââââââââââââââ */
-    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.45s ease, transform 0.45s ease; }
-    .reveal.in { opacity: 1; transform: none; }
-
-    @media (max-width: 520px) {
-      .modal { padding: 24px 18px; }
-      .day-nav-btn .btn-label { display: none; }
+    .feature p {
+      font-size: 0.9rem;
+      opacity: 0.85;
     }
   </style>
 </head>
 <body>
-
-<!-- âââ MASTHEAD âââ -->
-<header class="masthead">
-  <div class="masthead-vol">Vol. I Â· æè³å°ç½çæ¯æ¥è®æ¬</div>
-  <h1 class="masthead-title">æè³<em>æ¥å ±</em></h1>
-  <p class="masthead-tagline">Daily Investment Intelligence Â· For Beginners</p>
-  <div class="masthead-orn">
-    <div class="masthead-orn-line"></div>
-    <span>â¦</span>
-    <div class="masthead-orn-line"></div>
-  </div>
-</header>
-
-<!-- âââ NAV âââ -->
-<nav class="nav-strip">
   <div class="container">
-    <div class="nav-inner">
-      <span class="nav-label">ç¯©é¸å¾æ</span>
-      <button class="nav-chip all chip-active" id="chip-all"      onclick="setFilter('all')">å¨é¨</button>
-      <button class="nav-chip stock"           id="chip-stock"    onclick="setFilter('stock')">ð åè¡</button>
-      <button class="nav-chip etf"             id="chip-etf"      onclick="setFilter('etf')">ð ETF</button>
-      <button class="nav-chip industry"        id="chip-industry" onclick="setFilter('industry')">ð­ ç¢æ¥­</button>
-    </div>
-  </div>
-</nav>
+    <h1>📰 投資日報</h1>
+    <p class="subtitle">每天一則台股投資新聞，適合初學者</p>
 
-<main>
-  <div class="container">
+    <p class="description">
+      由 Claude AI 自動搜尋、分析、撰寫，每天早上 8 點自動更新。
+      包含新聞分析、重點整理、專有名詞解釋。
+    </p>
 
-    <!-- âââ DAY NAVIGATOR âââ -->
-    <div class="day-nav reveal" id="day-nav">
-      <button class="day-nav-btn" id="btn-prev" onclick="navigate(-1)">
-        â <span class="btn-label">åä¸æ¥</span>
-      </button>
-      <div class="day-nav-center">
-        <div class="day-nav-big"  id="nav-day"></div>
-        <div class="day-nav-weekday" id="nav-wd"></div>
-        <div class="day-nav-month"   id="nav-ym"></div>
-        <div id="today-pill" class="today-pill">ä»æ¥</div>
+    <a href="./investment-daily.html" class="button">📖 閱讀今日投資日報</a>
+
+    <div class="features">
+      <div class="feature">
+        <h3>🤖 AI 自動生成</h3>
+        <p>每天自動搜尋最新台股新聞，挑選最適合初學者的內容</p>
       </div>
-      <button class="day-nav-btn" id="btn-next" onclick="navigate(1)">
-        <span class="btn-label">å¾ä¸æ¥</span> â
-      </button>
-    </div>
-
-    <!-- âââ ARTICLE (dynamic) âââ -->
-    <div id="article-wrap"></div>
-
-  </div>
-</main>
-
-<!-- âââ QUIZ FAB âââ -->
-<button class="quiz-fab" id="quiz-fab" onclick="openQuiz()" style="display:none">
-  <span class="quiz-fab-ico">ð</span>æ¨æ¥åè©æ¸¬é©
-</button>
-
-<!-- âââ QUIZ MODAL âââ -->
-<div class="modal-overlay" id="modal-overlay" onclick="overlayClick(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeQuiz()">â</button>
-    <div id="modal-body"></div>
-  </div>
-</div>
-
-<footer>
-  <div class="container">
-    <div class="footer-inner">
-      <div class="footer-brand">æè³<em>æ¥å ±</em></div>
-      <div class="footer-note">
-        æ¬ç¶²ç«å§å®¹åä¾å­¸ç¿åèï¼ä¸æ§æä»»ä½æè³å»ºè­°ã<br>
-        æè³æé¢¨éªï¼é²å ´åè«å¯©æè©ä¼°èªèº«é¢¨éªæ¿åè½åã
+      <div class="feature">
+        <h3>⏰ 每日更新</h3>
+        <p>台北時間每天早上 8 點自動發布新文章</p>
+      </div>
+      <div class="feature">
+        <h3>🎓 初學者友善</h3>
+        <p>深入淺出的分析，帶你認識股市術語與概念</p>
+      </div>
+      <div class="feature">
+        <h3>📚 詞彙解釋</h3>
+        <p>每篇文章包含 5+ 個重要投資概念的完整解說</p>
       </div>
     </div>
   </div>
-</footer>
-
-<script>
-/* âââââââââââââââââââââââââââââââââââââââââââ
-   DATA  â  3 days of content
-âââââââââââââââââââââââââââââââââââââââââââ */
-const DAYS = ["2026-05-25","2026-05-24","2026-05-23","2026-05-22","2026-05-21","2026-05-20","2026-05-17","2026-05-18","2026-05-19"];
-const TODAY = "2026-05-25";
-
-const DATA = {
-  "2026-05-25": {
-    headline: "記憶體股告別暴漲暴跌！AI長約讓台廠訂單鎖定到2028",
-    deck: "雲端大廠簽1-5年LTA長約並預付不退款訂金，本波多頭週期將延長至12季",
-    source: "豐雲學堂（元大投顧）",
-    readingTime: 4,
-    difficulty: 2,
-    difficultyLabel: "進階",
-    tags: [{t:"industry",l:"記憶體"},{t:"industry",l:"AI"}],
-    summary: "過去記憶體市場如同沒有罰則的吃到飽自助餐：原廠大量生產、買家隨時抽單、價格暴起暴落。但2026年AI伺服器爆量需求徹底改變遊戲規則。AWS、Google、微軟等雲端大廠為確保AI算力不斷鏈，開始簽署1到5年的LTA長期供應協議，並預付10%~30%「不退款」訂金鎖定產能。這代表本波記憶體多頭週期從傳統6-8季大幅延長至10-12季，最快要到2027年下半年才會反轉，台廠南亞科、華邦電、群聯等直接受惠。",
-    keypoints: [
-      "AI伺服器所需的HBM晶片大量吃掉三星、SK Hynix、美光的晶圓產能，傳統記憶體供給被嚴重排擠",
-      "雲端服務商（CSP）被迫簽1-5年LTA長約，預付10-30%不可退訂金，買家再也無法輕易抽單",
-      "本波多頭週期預計從傳統6-8季延長至10-12季，最快2027下半年才見供需反轉",
-      "台廠受惠方：南亞科、華邦電（利基製造）、群聯（控制IC龍頭）、力成、日月光（先進封測）"
-    ],
-    terms: [
-      {
-        name: "LTA（長期供應協議）",
-        en: "Long-Term Agreement",
-        short: "供應商與客戶鎖定1-5年的數量與價格合約",
-        full: "Long-Term Agreement 是一種供應商與買方預先約定未來1至5年的採購數量、交貨時程與價格區間的合約。不同於隨時可取消的現貨採購，LTA 通常要求買方預付10%至30%的「違約不退款」訂金，確保雙方都有強烈的履約動機。AI 時代的雲端大廠如 AWS、Google、微軟為保障算力供應不中斷，紛紛採用 LTA 向記憶體原廠鎖定產能。",
-        eg: "就像租房子簽5年長約並付半年押金，房東（原廠）和房客（雲端大廠）都不能輕易毀約。"
-      },
-      {
-        name: "HBM（高頻寬記憶體）",
-        en: "High Bandwidth Memory",
-        short: "AI GPU 必備的超快速記憶體，每秒傳輸速度是一般 DDR5 的10倍以上",
-        full: "High Bandwidth Memory 是一種將多層 DRAM 晶片垂直堆疊並透過矽穿孔（TSV）直接連接 GPU 的高速記憶體。在 AI 大模型訓練時，GPU 需要每秒傳輸數 TB 的資料，傳統記憶體完全跟不上。HBM 的頻寬高達每秒 1TB 以上，遠超 DDR5 的 80GB/s，是 NVIDIA H100、B100 等 AI 晶片的核心組成。由於製程複雜且良率低，全球只有三星、SK Hynix、美光能製造。",
-        eg: "就像高速公路從4線道升級到40線道，資料傳輸速度快到跟不上的晶片就會成為瓶頸。"
-      },
-      {
-        name: "CSP（雲端服務供應商）",
-        en: "Cloud Service Provider",
-        short: "提供雲端運算服務的科技巨頭，如 AWS、Google Cloud、微軟 Azure",
-        full: "Cloud Service Provider 是指提供虛擬化計算資源（伺服器、儲存、網路）的企業，讓用戶無需購買實體硬體即可使用強大的運算能力。三大 CSP——AWS（亞馬遜）、Google Cloud、微軟 Azure——合計控制全球雲端市場約65%份額，他們為建設 AI 基礎設施正在大量採購記憶體、GPU、光通訊元件等零組件，成為台灣半導體業的關鍵訂單來源。",
-        eg: "CSP 就像台灣的台電，不是自己用電，而是負責替全台灣輸送電力；CSP 則是替全世界輸送算力。"
-      },
-      {
-        name: "景氣循環",
-        en: "Industry Cycle",
-        short: "產業因供需失衡反覆出現繁榮與衰退的規律性波動",
-        full: "景氣循環是指某產業因需求爆發→廠商瘋狂擴產→供過於求→價格崩跌→廠商縮減資本支出→供應短缺→需求回升，這樣週而復始的循環。記憶體產業傳統上是景氣循環最劇烈的產業之一，每個週期大約6至8季（約2年）。由於此波 AI 需求改以 LTA 長約鎖定，打破了傳統的短週期格局，分析師預估本波上行週期將延長至10至12季。",
-        eg: "就像豬肉漲價→大家養豬→豬太多→豬肉崩盤→大家停止養豬→豬肉又漲的循環，但 AI 這次像是政府簽了5年採購合約。"
-      },
-      {
-        name: "利基型記憶體",
-        en: "Niche Memory",
-        short: "針對特定應用的小批量、高單價特殊記憶體，如工業、車用、醫療用途",
-        full: "Niche Memory（利基型記憶體）指不追求大量生產，而是針對特定市場（如工業控制、汽車、醫療設備）設計的特殊規格記憶體。與追求最先進製程的 DRAM 主流廠不同，利基型廠商如台灣的南亞科、華邦電，專注於高穩定性、寬溫適應的產品，毛利率通常較高。當 AI 吃掉大廠的晶圓產能時，利基型廠商因為大廠騰不出手來搶市場，反而獲得難得的訂單填補機會。",
-        eg: "就像進口車品牌瘋搶豪華車訂單時，路邊修車廠反而可以專心接到更多一般維修生意。"
-      }
-    ]
-  },
-  "2026-05-24": {
-    headline: "AIåé»æªç¸ä¾äºï¼éé»äºå¤§éåçºä½è¢«æ³äººçæ¶ï¼",
-    deck: "å¾è®å£å¨å°æ ¸è½ï¼å°è¡éé»è¡æèº«ä¸è®æAIåºç¤å»ºè¨­ï¼æ¬çæ¯æ­£å¨éä¼°ä¸­",
-    source: "è±é²å­¸å ï¼åè±è­å¸ï¼",
-    readingTime: 5,
-    difficulty: 2,
-    difficultyLabel: "é²é",
-    tags: [{t:"industry", l:"éé»"}, {t:"industry", l:"AI"}],
-    summary: "AIè³æä¸­å¿æ¶èçé»éé©äººï¼é«çææ°å ±åå°æ ¸è½èé»åå¤åååçºå¹´åº¦ææ ¸å¿ä¸»é¡ï¼ç´æ¥å¼çå°è¡éé»æç¾¤æ¼²åæ½®ãè¯åãå£«é»ãä¸­èé»ãäºåãå¤§äºäºå¤§é»åæå°ï¼ä»¥å¾è¢«è¦çºå³ç¢å®å­è¡ï¼ç¾å¨å»è¢«æ³äººéæ°å®ç¾©çºAIåºç¤å»ºè¨­ãç¶Metaãå¾®è»ç­ç¸ç°½ç½²æ ¸é»é·ç´ï¼å°ç£è½åºå£500kVè¶é«å£è®å£å¨çè¯åãææGISå«æå¸ä½çä¸­èé»ï¼å°±æçºå¨çé»ååæ©æç´æ¥çåæ èãå¸å ´é æéäºå¬å¸çæ¬çæ¯ï¼å°å¾å³çµ±15åå30åä»¥ä¸æºé²ã",
-    keypoints: [
-      "AIè³æä¸­å¿éè¦ç©©å®çåºè¼é»åï¼æ ¸è½èéé»è¨­åå æ­¤æçºAIæä»£çæ°ç¥ç©è³",
-      "é«çå°æ ¸è½èè½æºå¤åååçºå¹´åº¦ææ ¸å¿æè³ä¸»é¡ï¼å¼çå°è¡éé»æç¾¤æ¼²å",
-      "è¯åæ¯å°ç£å¯ä¸è½å¤é·500kVè¶é«å£è®å£å¨çå» åï¼å¨ç¾è¨å®æå°ä¸å¹´å¾",
-      "ä¸­èé»å¨345kVæ°£é«çµç·£ééææè¶éå«æå¸ä½çï¼å°é»è¨å®è½è¦åº¦é«",
-      "éé»è¡çæ¬çæ¯æ­£å¾å³ç¢ç15åï¼è¢«æ³äººéä¼°è³AIåºå»ºç30åä»¥ä¸"
-    ],
-    terms: [
-      {
-        name: "åºè¼é»å",
-        en: "Baseload Power",
-        short: "ä¸å¹´365å¤©ã24å°æç©©å®è¼¸åºçé»å",
-        full: "åºè¼é»åæ¯æè½å¤ ä¸éæ·ãç©©å®ä¾æçé»åä¾æºï¼ä¾å¦æ ¸è½ãçç¤æçæ°£ç¼é»ãç¸å°æ¼é¢¨åæå¤ªé½è½éé¡åå¤©åå½±é¿çåçè½æºï¼åºè¼é»åæ¯AIè³æä¸­å¿çæä½³é¸æï¼å çºä¼ºæå¨ä¸è½æ¥åä»»ä½æ·é»ã",
-        eg: "å°±åä½ å®¶å°ç®±éè¦24å°ææé»ï¼AIä¼ºæå¨ä¹éè¦æ°¸ä¸ä¸­æ·çåºè¼é»åã"
-      },
-      {
-        name: "æ¬çæ¯ï¼P/Eï¼",
-        en: "Price-to-Earnings Ratio",
-        short: "è¡å¹æ¯æ¯è¡ç²å©å¹¾åï¼åæ å¸å ´å°å¬å¸æé·çæå¾",
-        full: "æ¬çæ¯ï¼P/E Ratioï¼= è¡å¹é¤ä»¥æ¯è¡çé¤ï¼EPSï¼ãP/Eè¶é«ï¼è¡¨ç¤ºæè³äººé¡æçºåæ¨£çç²å©ä»åºæ´é«çå¹æ ¼ï¼éå¸¸ä»£è¡¨å¸å ´èªçºééå¬å¸æªä¾æé·æ§å¼·ãéé»è¡éå»P/Eåªæ15åï¼ç¾å¨æ³äººèªçºææ¯ç§AIåºå»ºè¡ï¼çµ¦äº30åä»¥ä¸çè©å¹ã",
-        eg: "ä¸å®¶å¬å¸æ¯å¹´è³º10åï¼è¥è¡å¹150åï¼P/Eå°±æ¯15åï¼è¥æ¼²å°300åï¼P/Eå°±è®æ30åã"
-      },
-      {
-        name: "è¶é«å£è®å£å¨",
-        en: "Ultra-High Voltage Transformer",
-        short: "å°é»å£åé«ä»¥ä¾¿é·è·é¢è¼¸é»çå¤§åè¨­å",
-        full: "è¶é«å£è®å£å¨ï¼500kVä»¥ä¸ï¼æ¯é»åå³è¼¸ç³»çµ±çæ ¸å¿è¨­åï¼è½å°ç¼é»å» ç¢ççé»ååå£å¾é·è·é¢å³è¼¸ï¼åéå£çµ¦ç¨æ¶ä½¿ç¨ãè£½é æè¡éæª»æ¥µé«ï¼å¨çè½çç¢500kVä»¥ä¸ç­ç´çå» åå±æå¯æ¸ï¼å°ç£çè¯åé»æ©æ¯å¶ä¸­ä¹ä¸ï¼ä¸¦å·²æå¥ç¾åå¸å ´ã",
-        eg: "å°±åé«éå¬è·¯è®è»è¼å¿«éééä¸æ¨£ï¼è¶é«å£è®å£å¨è®é»åä»¥æå°æèé·è·é¢é«éå³è¼¸ã"
-      },
-      {
-        name: "å°åæ ¸è½ï¼SMRï¼",
-        en: "Small Modular Reactor",
-        short: "æ°åå°åæ¨¡çµåæ ¸åæçï¼æ¯å³çµ±æ ¸é»å» æ´éæ´»",
-        full: "SMRæ¯æ°ä¸ä»£æ ¸è½æè¡ï¼ç¼é»éç´çºå³çµ±æ ¸é»å» çäºåä¹ä¸å°ååä¹ä¸ï¼å¯ä»¥å¨å·¥å» é è£½å¾éå°åå°å®è£ãç±æ¼ä½å°å°ãå»ºè¨­å¿«ãææ¬ä½ï¼Metaèå¾®è»ç­ç§æå·¨é ­ç©æ¥µæè³SMRï¼çºAIè³æä¸­å¿æä¾ç©©å®çé¶ç¢³é»åã",
-        eg: "å³çµ±æ ¸é»å» åä¸æ£å¤§åç¾è²¨å¬å¸ï¼SMRååå¯ä»¥å¿«éçµè£çé£éä¾¿å©ååºï¼åªè£¡éè¦å°±è¨­å¨åªè£¡ã"
-      },
-      {
-        name: "è©å¹éä¼°",
-        en: "Valuation Re-rating",
-        short: "å¸å ´çµ¦äºä¸éå¬å¸æ´é«ææ´ä½æ¬çæ¯çéç¨",
-        full: "ç¶ä¸éå¬å¸çæ¥­åæ§è³ªææé·æ½åè¢«å¸å ´éæ°èªè­ï¼æè³äººé¡æç¨æ´é«çæ¬çæ¯ä¾ä¼°ç®å¶è¡å¹ï¼éåéç¨ç¨±çºè©å¹éä¼°ï¼Re-ratingï¼ãå°è¡éé»è¡åæ¬è¢«è¦çºä½æé·çå³ç¢è¡ï¼çµ¦äºä¿å®ç15åP/Eï¼ç¾å¨å çºèAIé»åéæ±å¼·çé£çµï¼æ³äººèªçºæä»¥30åä»¥ä¸çAIåºå»ºè¡ä¼°å¼ä¾çå¾ã",
-        eg: "å°±åä¸åéä¸å°åºçªç¶å çºæéè¦èæ·éç«ï¼ç¬éè¢«æ¿ä»²ä¼°ç®åºé é«æ¼ä»¥å¾çç§éè¡æã"
-      }
-    ]
-  },
-  "2026-05-23": {
-    headline: "00878éæ¯åµæ°é«0.66åï¼4å¤©å®ç¾å¡«æ¯ï¼",
-    deck: "158è¬å­è¡æçåæ°ETFååµä½³ç¸¾ï¼æ­·å²æ°é«è¡å©ï¼4äº¤ææ¥ééå¡«æ¯",
-    source: "è¯åæ°èç¶²",
-    readingTime: 3,
-    difficulty: 1,
-    difficultyLabel: "å¥é",
-    tags: [{t:"etf", l:"ETF"}, {t:"industry", l:"é«è¡æ¯"}],
-    summary: "åæ³°æ°¸çºé«è¡æ¯ETFï¼00878ï¼å¨2026å¹´ç¬¬2å­£éç¼æ¯è¡0.66åç¾éè¡å©ï¼åµä¸æ­·å²æ°é«ã5æ19æ¥é¤æ¯å¾ï¼è¡å¹æçºåè²·ç¤éçï¼åèæ4åäº¤ææ¥ä¾¿æ¼5æ22æ¥éç¤å¾çªç ´28åï¼æé«ä¾å°28.19åï¼æ­£å¼å®æå¡«æ¯ãæ¬æ¬¡è¡å©é è¨æ¼6æ12æ¥å¥å¸³ã00878ææè¶é158è¬ææè¡æ°ï¼æ¯å°ç£æåå­è¡ææ­¡è¿çé«è¡æ¯ETFä¹ä¸ï¼æ­¤æ¬¡è¿éå¡«æ¯è®ç¾å¤å­è¡æåä¸å®å¿ä¸¸ï¼ååº¦å°è­é«è¡æ¯ETFçé·æç©©å¥æ§ã",
-    keypoints: [
-      "00878éç¼2026å¹´Q2æ¯è¡0.66åè¡å©ï¼åµä¸æ­·å²æ°é«",
-      "5æ19æ¥é¤æ¯ï¼åèå¹27.14åï¼ï¼å4åäº¤ææ¥å®æå¡«æ¯",
-      "5æ22æ¥è¡å¹æé«è¡è³28.19åï¼æ­£å¼å®£åå¡«æ¯æå",
-      "è¡å©é è¨6æ12æ¥å¥å¸³ï¼å±158è¬è¡æ°åç",
-      "åæ­¥é²è¡åå¹´åº¦ææ¸æåè¡å¾®èª¿ï¼éä½å¨è½ææ¬"
-    ],
-    terms: [
-      {
-        name: "é¤æ¯",
-        en: "Ex-Dividend",
-        short: "ETFéç¼è¡å©ç¶å¤©ï¼è¡å¹åæ­¥ä¸èª¿çæ©å¶",
-        full: "ç¶ETFæè¡ç¥¨å®£å¸éç¼è¡å©æï¼é¤æ¯æ¥ç¶å¤©éç¤åè¡å¹æèªåä¸èª¿ç­åè¡å©éé¡çæ¸å­ãä¾å¦00878é¤æ¯åæ¶ç¤å¹ç´27.80åï¼éæ¯0.66åï¼é¤æ¯åèå¹å°±è®æ27.14åãéä¸æ¯è¡ç¥¨è·äºï¼èæ¯æä½ æå¾çé¢åæ£æçæ©å¶ã",
-        eg: "å°±åèç³åä¸å¡çµ¦ä½ åï¼å©ä¸çèç³èªç¶è®å°äºï¼ä½ä½ æ´é«å¶å¯¦æ²å°ã"
-      },
-      {
-        name: "å¡«æ¯",
-        en: "Dividend Recovery",
-        short: "é¤æ¯å¾è¡å¹éæ°æ¼²åé¤æ¯åæ°´æº",
-        full: "é¤æ¯å¾ï¼å¦æè¡å¹è½æ¼²åå°é¤æ¯åçå¹ä½ï¼å°±å«å¡«æ¯æåãå¡«æ¯ä»£è¡¨æè³äººä¸åªæ¿å°äºè¡æ¯ï¼è¡å¹ä¹åä¾äºï¼ç­æ¼çæ­£è³ºå°éç­éæ¯ãè¥è¡å¹é²é²ç¡æ³åå°åæ¬æ°´æºï¼å°±å«è²¼æ¯ï¼ä»£è¡¨è¡æ¯éæ²ççé²å£è¢ã",
-        eg: "é¤æ¯åæ¯å¾å¸³æ¶æåº66åï¼å¡«æ¯å°±æ¯å¸³æ¶é¤é¡åæ¢æ¢å­ååæ¬æ°´æºã"
-      },
-      {
-        name: "é«è¡æ¯ETF",
-        en: "High-Dividend ETF",
-        short: "å°éæé¸éæ¯ç©©å®ãæ®å©çé«çè¡ç¥¨çµæçETF",
-        full: "é«è¡æ¯ETFçç®æ¨æ¯æä¾ç©©å®ç¾éæµï¼æé¸çæåè¡éå¸¸æ¯éæ¯çé«ãè²¡åé«è³ªç©©å¥çå¬å¸ã00878éå å¥ESGç¯©é¸ï¼ç°ä¿ãç¤¾æè²¬ä»»ãå¬å¸æ²»çï¼ï¼è®æè³äººå¨é æ¯çåæï¼ä¹æè³ææ°¸çºç¶ççå¿µçä¼æ¥­ã",
-        eg: "å°±åè²·äºä¸ç±æå®æçèçéï¼æ¯å­£é½è½æ¶å°ä¸æ¹æ°é®®éèï¼è¡æ¯ï¼ã"
-      },
-      {
-        name: "å­£éæ¯",
-        en: "Quarterly Dividend",
-        short: "æ¯3åæç¼æ¾ä¸æ¬¡è¡æ¯",
-        full: "å³çµ±å°è¡ETFå¤çºå¹´éæ¯ï¼ä¸å¹´éä¸æ¬¡ï¼ï¼èå­£éæ¯ETFæ¯å­£ç´3åæå°±ç¼ä¸æ¬¡ï¼å¨å¹´å±ç¼4æ¬¡ãå°å­è¡æä¾èªªï¼å­£éæ¯çå¥½èæ¯ç¾éæµæ´ç©©å®æ´é »ç¹ï¼ç¹å¥åéä¼ææéè¦å®ææ¶å¥çæè³äººåæã",
-        eg: "å¹´éæ¯åå¹´çµçéï¼å­£éæ¯åæ¯å­£é½æçéï¼åªç¨®è®ä½ æ´æå®å¨æï¼"
-      },
-      {
-        name: "æ®å©ç",
-        en: "Dividend Yield",
-        short: "æ¯å¹´éæ¯éé¡Ã·è¡å¹ï¼è¡¡ééæ¯æççææ¨",
-        full: "æ®å©ç = å¨å¹´è¡æ¯ Ã· è¡å¹ Ã 100%ãè¥00878ä¸å¹´é4æ¬¡åè¨ç´2.4åï¼è¡å¹ç´28åï¼æ®å©çå°±æ¯ç´8.6%ãæ®å©çè¶é«ä»£è¡¨æ¯æå¥ä¸åè½æ¿åçè¡æ¯è¶å¤ï¼ä½è¦æ³¨ææ®å©çé«ä¸ç­æ¼ä¸å®è³ºï¼éè¦çå¡«æ¯è½åã",
-        eg: "æ®å©çå°±åéè¡å­æ¬¾å©çï¼åè¨´ä½ æé¢å­é²å»è½é å¤å°å©æ¯ã"
-      }
-    ]
-  },
-  "2026-05-22": {
-    headline: "MSCI 5/29çæåæ¸ä¸é±ï¼å°ç©é»çå¸2,500åæ´»æ°´",
-    deck: "ææ¸æ¬éèª¿åï¼å°ç©é»æ¢æ¬¾ééå©å¤ï¼æ³äººé ä¼°è¿2,500åè¢«åè³éå°æ¹§å¥å°è¡",
-    source: "ç¶æ¿æ¥å ±ï¼ä»å¨åï¼å£è¢å­¸å ",
-    readingTime: 4,
-    difficulty: 2,
-    difficultyLabel: "é²é",
-    tags: [{t:"stock", l:"åè¡"}, {t:"industry", l:"åå°é«"}],
-    summary: "MSCIï¼ææï¼æ¼5æ12æ¥å¬å¸2026å¹´ç¬¬2å­£å­£åº¦èª¿æ´ï¼å°ç©é»å¨MSCIå°ç£ææ¸ä¸­çæ¬éå¾57.77%å¤§å¹èª¿åè³58.33%ï¼å°è¡å¨å¨çæ°èå¸å ´ææ¸çæ´é«æ¬éä¹å¾23.46%æåè³23.76%ï¼åµæ­·å²æ°é«ãæ¬æ¬¡èª¿æ´å°æ¼5æ29æ¥æ¶ç¤å¾æ­£å¼çæï¼è·ä»ä¸å°ä¸é±ãè¿½è¹¤MSCIææ¸çè¢«åå¼åºéï¼ETFãææ¸ååºéï¼å¿é ææ¯ä¾èª¿æ´æè¡ï¼æ³äººä¼°è¨å°å¸¶å¥ç´1,500åè³2,500ååçè²·ç¤è³éæ¹§å¥å°ç©é»ãåæ­¥å æçéæéç®¡ææ¼4æä¸æ¬ææ¿çãå°ç©é»æ¢æ¬¾ãââå°åå§ä¸»åå¼åºéåä¸»åETFå°å®ä¸åè¡çæè¡ä¸éï¼å¾æ·¨å¼10%å¤§å¹æ¾å¯¬è³25%ï¼çè«ä¸å¯åéåºç´2,000ååçå¢æç©ºéãééå©å¤äº¤çä¹ä¸ï¼å¸å ´é æ5/29æ¶ç¤åå¾å°åºç¾å¤§è¦æ¨¡è³éèª¿åï¼æè³äººéçæå°¾ç¤æ³¢åå åçé¢¨éªã",
-    keypoints: [
-      "MSCIå°ç£ææ¸èª¿æ´5/29çæï¼å°ç©é»æ¬éåè³58.33%ï¼è¿½è¹¤åºéè¢«åè²·ç¤ä¼°é1,500~2,500åå",
-      "éç®¡æãå°ç©é»æ¢æ¬¾ãæ¾å¯¬ä¸»ååºéå®ä¸æè¡ä¸éè³25%ï¼å¯åéåºç´2,000åæ½å¨è²·ç¤",
-      "å°è¡å¨MSCIå¨çæ°èå¸å ´ææ¸æ¬éåè³23.76%ï¼çºæ­·å²æ°é«ï¼æå©å¸å¼åéè³éé·æéç½®",
-      "MSCIåæ­¥æ°å¢æºç½(6223)å¥åå°ç£ææ¸ï¼ä¸¦åªé¤ä»å¯¶ãå¯æãäºæ³¥ç­7æªæåè¡",
-      "5/29çæç¶å¤©å°¾ç¤é æå¤ç©ºè³éæ¿çåå¼ï¼ç­ç·æ³¢åé¢¨éªé æ³¨æ"
-    ],
-    terms: [
-      {
-        name: "MSCIææ¸",
-        en: "MSCI Index",
-        short: "å¨çæå¤§ææ¸ç·¨è£½å¬å¸ï¼è¿½è¹¤ååè¡å¸è¡¨ç¾",
-        full: "MSCIï¼ææï¼Morgan Stanley Capital Internationalï¼æ¯å¨çæå·å½±é¿åçææ¸ç·¨è£½æ©æ§ï¼æä¸ææ¸æ¶µè23åå·²éç¼å¸å ´ã24åæ°èå¸å ´ãå¨çè¶é13åç¾åè³ç¢ä»¥MSCIææ¸çºæ¨çé²è¡è¢«åæè³ï¼æ¯å­£èª¿æ´æ¬éæï¼è¿½è¹¤éäºææ¸çETFèåºéå¿é è·èè²·è³£ï¼å°æåè¡å½¢æå¼·å¤§çè³éé²åºææã",
-        eg: "å°±åç­ä¸æåºå®åº§ä½åéï¼MSCIä¸æåå®ï¼è·èæåå®çåå­¸ï¼è¢«ååºéï¼å°±è¦ç§èæäººã"
-      },
-      {
-        name: "æ¬éèª¿å",
-        en: "Weight Increase",
-        short: "ææ¯è¡ç¥¨å¨ææ¸ä¸­ä½çæ¯ä¾å¢å ",
-        full: "ææ¸ç±å¤æ¯è¡ç¥¨çµæï¼æ¯æ¯è¡ç¥¨ä¾å¸å¼å¤§å°åéãæ¬éãï¼ä½æ¯ï¼ãç¶æè¡ç¥¨å¸å¼å¢å æè¦åèª¿æ´ï¼å¶å¨ææ¸ä¸­çæ¯éæé«ï¼ç¨±çºãæ¬éèª¿åããè¿½è¹¤ææ¸çè¢«åå¼åºéå¿é å¢æè©²è¡ç¥¨è³æ°æ¯ä¾ï¼å æ­¤èªåå¸¶ä¾è²·ç¤éæ±ï¼æ¯å©å¤è¨èã",
-        eg: "å°±åèç³éæ°åæ³ï¼å°ç©é»é£å¡å¾57.77%æ¹æ58.33%ï¼åå°æ´å¤§å¡ï¼ææè·èç³ç§æ¯ä¾åçäººï¼è¢«ååºéï¼é½è¦å¤åä¸é»ã"
-      },
-      {
-        name: "è¢«åå¼åºé",
-        en: "Passive Fund / Index Fund",
-        short: "ä¸ä¸»åé¸è¡ï¼å®å¨è¤è£½ææ¸æåçæè³å·¥å·",
-        full: "è¢«åå¼åºéï¼åå«ETFãææ¸ååºéï¼çæè³ç­ç¥æ¯ãè¤è£½ææ¸ãââææ¸æåæ¯ä»éº¼è¡ç¥¨ãæ¯ä¾å¤å°ï¼åºéå°±è²·ä¸æ¨¡ä¸æ¨£çãç¸å°æ¼ä¸»ååºéï¼ç±åºéç¶çäººä¸»è§é¸è¡ï¼ï¼è¢«åå¼åºéè²»ç¨ä½ãéæåº¦é«ï¼è¿å¹´è¦æ¨¡å¿«éå¢é·ï¼å¨çå·²è¶é13åç¾åã",
-        eg: "å¦åå­¸æ ¡è¦å®ãç§æç¸¾å®æåº§ä½ãï¼ä¸è«èå¸«åä¸åæ­¡ï¼é½è¦ç§èæï¼MSCIèª¿æ´åå®ï¼è¢«ååºéå°±ç§å®å¨è²·ã"
-      },
-      {
-        name: "å°ç©é»æ¢æ¬¾",
-        en: "TSMC Clause",
-        short: "éç®¡ææ¾å¯¬åºéæè³å®ä¸åè¡ä¸éè³25%çæ°è¦å®",
-        full: "2026å¹´4æï¼éç®¡ææ­£å¼å®£å¸æ¾å¯¬åå§è¡ç¥¨ååºéåä¸»åå¼ETFå°å®ä¸åè¡çæè³æ¯çä¸éï¼å¾æ·¨å¼10%æé«è³25%ï¼æ¢ä»¶æ¯ä¸å¾è¶éè©²è¡ç¥¨å¨å°è¡çå¸å¼æ¬éï¼ãç®ååªæå°ç©é»ç¬¦åæ­¤æ¨æºï¼æä¿ç¨±ãå°ç©é»æ¢æ¬¾ããæ­¤èé ä¼°å¯è®åå§åºéå°å°ç©é»çæè¡åå¢å ç´2,000ååã",
-        eg: "åæ¬è¦å®æ¯äººæå¤åªè½è²·10%çèç³ï¼ç¾å¨ç¹å¥åè¨±ä½ è²·å°25%ï¼ä½åªæè²·æå¤§å¡èç³ï¼å°ç©é»ï¼æç¬¦åè³æ ¼ã"
-      },
-      {
-        name: "æ°èå¸å ´ææ¸",
-        en: "Emerging Market Index",
-        short: "è¿½è¹¤éç¼ä¸­åå®¶è¡å¸çæ´é«ææ¸",
-        full: "MSCIæ°èå¸å ´ææ¸ï¼MSCI EMï¼æ¶µè24åéç¼ä¸­åå®¶çè¡å¸ï¼åå«å°ç£ãä¸­åãå°åº¦ãéåç­ï¼æ¯å¨çè³ééç½®æ°èå¸å ´çä¸»è¦åèæ¨ç«¿ãå°ç£å¨æ­¤ææ¸çæ¬éå¾23.46%åè³23.76%ï¼ä»£è¡¨è¿½è¹¤æ­¤ææ¸çå¨çè³éå°å°ç£çéç½®æ¯ä¾æé¨ä¹æé«ï¼æå©å¸¶åå¤è³é·ææµå¥ã",
-        eg: "æ³åä¸åæè³äººåªæä¸å®é ç®è¦åçµ¦ååï¼MSCI EMå°±æ¯ä»çåéè¡¨ï¼å°ç£æ¯éåé«ï¼ä»å°±è¦å¤è²·å°ç£è¡ç¥¨ã"
-      }
-    ]
-  },
-  "2026-05-21": {
-    headline: "è²»åé£æ¼²4.5%å¼çï¼å°ç©é»æ¼²55åï¼å°è¡éå41000å¤§é",
-    deck: "ç¾è¡è²»ååå°é«ææ¸å®æ¥å¤§æ¼²507é»ï¼å¸¶åå°ç©é»å¼·å½ï¼å°è¡æ©ç¤é£é¾åé»",
-    source: "ETtodayè²¡ç¶é²",
-    readingTime: 3,
-    difficulty: 1,
-    difficultyLabel: "å¥é",
-    tags: [{t:"stock",l:"å°ç©é»"}],
-    summary: "åç¾è¡è²»ååå°é«ææ¸ï¼è²»åï¼å®æ¥å¤§æ¼²4.49%ãéçææ¸ä¸æ¼²é¾645é»æ¿åµï¼å°è¡ä»æ¥ï¼5/21ï¼å¼·ååå½ï¼æ©ç¤é£æ¼²é¾åé»ï¼éå41,000é»æ´æ¸å¤§éãå°ç©é»ï¼2330ï¼ä»æ¥å¤§æ¼²55åè³2,240åï¼æ¼²å¹é2.52%ï¼çºå¸¶åå¤§ç¤çä¸»è¦æ¨æãåä¸æ¥ï¼5/20ï¼å¤è³å¤§å¹è³£è¶é¾632ååãèª¿ç¯å°ç©é»é¾1.7è¬å¼µï¼ä»æ¥æé¡¯è½åæ¿æ¥ï¼é¡¯ç¤ºå¤è³å°å°ç©é»ä¸­é·æå±æä»å·ä¿¡å¿ã",
-    keypoints: [
-      "ç¾åè²»ååå°é«ææ¸å¤§æ¼²4.49%ï¼å¸¶åå°ç©é»èå°ç£åå°é«æç¾¤å¼·å¢åå½",
-      "å°ç©é»å®æ¥å¤§æ¼²55åè³2,240åï¼æ¼²å¹2.52%",
-      "å°è¡æ©ç¤é£æ¼²é¾1,144é»ï¼éå41,000é»æ´æ¸å¤§é",
-      "åæ¥å¤è³å¤§è³£è¶636åå¾ï¼ä»æ¥åºç¾æ¿æ¥ï¼å¸å ´æ°åå¿«ééè½",
-      "éçãS&P500ãé£æ¯éåæ¨æ¥å¨æ¸æ¶æ¼²ï¼çºå°è¡æä¾æ­£é¢èæ¯"
-    ],
-    terms: [
-      {
-        name: "è²»ååå°é«ææ¸",
-        en: "Philadelphia Semiconductor Index (SOX)",
-        short: "è¿½è¹¤ç¾ååå°é«é¡è¡çéè¦ææ¸",
-        full: "è²»ååå°é«ææ¸ï¼SOXï¼æ¯è¡¡éç¾åä¸»è¦åå°é«å¬å¸è¡å¹è¡¨ç¾çææ¸â¬æææµ±ãè¼éãè¶å¾®ç­ãå å°è¡ä»¥åå°é«çºä¸»åï¼è²»åèµ°å¢èå°è¡é«åº¦é£åã",
-        eg: "å°±åå°ç£åå°é«æ¥­çå¤©æ°£é å ±ï¼è²»åæ¼²ï¼å°è¡åå°é«è¡éå¸¸ä¹è·èæ´å¤©ã"
-      },
-      {
-        name: "è³£è¶",
-        en: "Net Sell",
-        short: "ææ©æ§ææç¾¤å¨ç¶æ¥è³£åºè¡ç¥¨å¤æ¼è²·å¥",
-        full: "ãè³£è¶ãææè³äººï¼éå¸¸ææ³äººï¼å¨ä¸åäº¤ææ¥ä¸­ï¼è³£åºçéé¡æå¼µæ¸è¶éè²·å¥çéé¡æå¼µæ¸ï¼ä»£è¡¨æ´é«åç¾æ¸ç¢¼ææ¤é¢çåä½ã",
-        eg: "å°±åé¤å»³å®¢äººé»é¤å°ãéèå¤ï¼ä»£è¡¨æ´é«éæ±å¨ä¸éã"
-      },
-      {
-        name: "æ´æ¸éå¡",
-        en: "Round Number Resistance",
-        short: "å¦41,000éé¡æ´æ¸é»ä½å°å¸å ´å¿ççå½±é¿",
-        full: "æ´æ¸éå¡æ¯æè¡å¸ææ¸çæ´æ¸é»ä½ï¼å¦40,000ã41,000é»ï¼ï¼å çºäººåå°æ´æ¸æç¹å¥ææçå¿çåæï¼å¾å¾å¨éäºé»ä½åºç¾è²·ç¤æè³£å£ï¼ä½¿å¶æçºæ¯ææå£ååã",
-        eg: "å°±åè·é¦¬ææ¾æï¼è·èçå°éç¨ç¢æç¹å¥ç¨åï¼æ´æ¸é»ä¹æé¡ä¼¼ææã"
-      }
-    ]
-  },
-  "2026-05-20": {
-    headline: "520è¡æç¼å¨ï¼äºå¤§ä¿¡è³´ç¢æ¥­æé¸è¡æ ¸å¿æ¡æ¶",
-    deck: "è³´æ¸å¾·å°±è·é±å¹´ï¼åå°é«ãAIãè»å·¥ãå®æ§ãæ¬¡ä¸ä»£éè¨äºå¤§ç¢æ¥­åæ¿ç­å æ",
-    source: "CMoneyæè³ç¶²èª",
-    readingTime: 4,
-    difficulty: 2,
-    difficultyLabel: "é²é",
-    tags: [{t:"industry",l:"åå°é«"},{t:"industry",l:"AI"}],
-    summary: "æ¯é¢5æ20æ¥åå¾ï¼å°è¡å¸¸åºç¾æè¬ã520è¡æãï¼å¸å ´é ææ¿åºç«¯åºå©å¤ï¼å¸¶åè¡å¸æ¶ç¥æ§ä¸æ¼²ã2026å¹´ç520è¡æï¼å¸å ´èç¦å¨è³´æ¸å¾·ç¸½çµ±æåºçäºå¤§ä¿¡è³´ç¢æ¥­ï¼åå°é«ãAIæç¨ãè»å·¥ãå®æ§è³å®èæ¬¡ä¸ä»£éè¨ãæ³äººåæï¼éäºå¤§ç¢æ¥­å¼å·æ¿ç­æ¯æèç¢æ¥­æé·æ§ï¼æ¯æ¬æ³¢è¡æææ ¸å¿çé¸è¡æ¡æ¶ãæ­¤å¤ï¼å³çµ±æ¿ç­é¡æçéé»èéèæç¾¤ä¹åæ­¥åå°éæ³¨ï¼æ³äººé ä¼°ä»å¹´520åå¾å°è¡åçæ³¢ååéè½å¨38,000è³42,500é»ä¹éã",
-    keypoints: [
-      "520è¡ææ¯æ¯å¹´5æ20æ¥åå¾ï¼å¸å ´é ææ¿ç­å©å¤å¸¶åçæ¶ç¥æ§ä¸æ¼²ç¾è±¡",
-      "è³´æ¸å¾·æåºãäºå¤§ä¿¡è³´ç¢æ¥­ãï¼åå°é«ãAIæç¨ãè»å·¥ãå®æ§è³å®ãæ¬¡ä¸ä»£éè¨",
-      "å¤è³ææå°ç©é»ãé´»æµ·ãåµæãä¸è¯-KYãæ¥æåææ§ç­äºå¤§æ ¸å¿æè¡",
-      "éé»èéèæç¾¤åæ­¥åæ ï¼çºå³çµ±æ¿ç­é¡æå ææ¨ç",
-      "æ³äººé ä¼°å°è¡åçæ³¢ååé38,000è³42,500é»"
-    ],
-    terms: [
-      {
-        name: "520è¡æ",
-        en: "May 20 Rally",
-        short: "æ¯å¹´5,å20æ¥åå¾çæ¿å­å©å¤è¡æ",
-        full: "å°ç¡£æ¯é¢5ï¿½ 20æï¼å¸å ´é ææ¿åºæ¬¡ç«¯åºæ¿å­å©å¤ãææ¯æ¯æ°£ä¿¡å¿ï¼é²èå¸¶åè¡å¸æ¶ç¥æ§ä¸æ¼²çå¿ææ­¥åºç¾è±¡ï¼ä¿ç¨±520è¡æã",
-        eg: "å°±åæ¯å¹´æ³¥æ¥ åå¤§å¨«ï¿½æç£å¹´çµãéï¼è¡æä¹æååæ å¦å¤é æã"
-      },
-              {
-        name: "äºå¤§ä¿¡è³´ç¢æ¥­",
-        en: "Five Key Trust Industries",
-        short: "æ¿åºé»åéé»æ¶æ¤çäºå¤§æ°ç¥ç¢æ¥­",
-        full: "å°ç£æ¿åºæåºåå°é«ãAIæç¨ãè»å·¥åé²ãå®æ§è³å®ãæ¬¡ä¸ä»£éè¨çºäºå¤§ä¿¡è³´ç¢æ¥­ï¼ä»£è¡¨æ¿ç­è³æºå°éé»æå¥ï¼æå©ç¸éå» ååå¾è¨å®èè£è²¼ã",
-        eg: "å°±åå­¸æ ¡éé»å¹è²çè³åªç­ï¼éäºåç¢æ¥­æç²å¾æ´å¤æ¿åºè³æºç§é¡§ã"
-      },
-              {
-        name: "å¤è³ï¿½ï¿½y.ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ÜZYÛ[ï¿½ï¿½]][Û[[ï¿½ï¿½\ï¿½ÜÈï¿½ï¿½Üï¿½ï¿½/ï¿½ï¿½!ê¹­mï¿½i%ï¿½ï¿½9i)ï¿½gï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½z,ï¿½ï¿½ !Hï¿½ï¿½ï¿½[ï¿½ï¿½i%ï¿½,ï¿½ï¿½ï¿½ï¿½y.ï¿½ï¿½ï¿½!ï¿½i%ï¿½g"ï¿½ï¿½9ï¿½ï¿½z,ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½"9iï¿½ï¿½gï¿½aï¿½yak9cï¿½8ï¿½ z` 9/$zaï¿½xï¿½ yï¿½ï¿½z,ï¿½ï¿½bï¿½:(c9ï¿½b{ï¿½"{ï¿½#9.ï¿½`$yï¿½yï¿½!ï¿½oï¿½9i)ï¿½,ï¿½ï¿½aï¿½{ï¿½#9amï¿½,ï¿½ï¿½,ï¿½ï¿½bï¿½yd$yoï¿½9oï¿½9olzgï¿½ï¿½cï¿½: ï¿½z-l9bï¿½ï¿½#9ï¿½+ï¿½n ï¿½h-:aï¿½z)ï¿½yï¿½:hï¿½9d$yï¿½!ï¿½ï¿½&xï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½ï¿½ï¿½y."ï¿½ï¿½:,ï¿½ï¿½a*ï¿½ï¿½'ï¿½ï¿½#:  yn*ï¿½dï¿½9d#9kn:`ï¿½yï¿½ ï¿½)ï¿½9kï¿½ï¿½.ï¿½`n9dï¿½. 9ï¿½a;ï¿½#9amï¿½.ï¿½.ï¿½ï¿½n.:-ï¿½ï¿½$eï¿½-l8ï¿½ ï¿½ï¿½ï¿½Bï¿½Bï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½LKLNHï¿½ï¿½ÂXY[ï¿½Nï¿½ï¿½RH9/.ï¿½ï¿½#yfj:g 9ï¿½`ï¿½ï¿½!ï¿½ï¿½o;ï¿½#9cï¿½9ï¿½czfï¿½ï¿½ab:`,ï¿½l z(ï¿½z* ï¿½eï¿½ï¿½ ï¿½z)ï¿½ï¿½nï¿½ï¿½nï¿½ï¿½/.:!ï¿½ï¿½ï¿½ï¿½ï¿½9nmï¿½ï¿½Xï¿½Îï¿½fï¿½:$eï¿½ï¿½'ï¿½ï¿½$9o#ï¿½RH9oï¿½ï¿½`'ï¿½ï¿½kï¿½cï¿½ï¿½#9l#zjï¿½9ï¿½b: ï¿½yï¿½ï¿½bï¿½ï¿½ï¿½:g 9ï¿½`ï¿½ï¿½ yï¿½9ï¿½ 9caï¿½ï¿½ ï¿½cï¿½9ï¿½czfï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½9ab:`,ï¿½l z(ï¿½yï¿½(ï¿½ ï¿½z/ï¿½y.cï¿½ï¿½ï¿½ï¿½/"{ï¿½#9ï¿½ï¿½z*ï¿½ï¿½ï¿½ ï¿½`#ï¿½g,ï¿½ï¿½ï¿½ï¿½9nm:* ï¿½eï¿½ï¿½ ï¿½z)ï¿½ï¿½nï¿½ï¿½ï¿½!yï¿½l;ï¿½#9n-ï¿½bï¿½yi%ï¿½,ï¿½ï¿½ï¿½ yï¿½9bï¿½9ï¿½9cï¿½9ï¿½hï¿½cbï¿½l#ï¿½jï¿½9ï¿½ï¿½ï¿½ï¿½8ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Nï¿½ï¿½mï¿½yeaï¿½ï¿½`ï¿½h,Hï¿½ï¿½XY[ï¿½ï¿½[YNï¿½ï¿½Yï¿½ï¿½Xï¿½[Nï¿½ï¿½[ï¿½\ï¿½YYX]Hï¿½Yï¿½ï¿½Xï¿½[SXï¿½[ï¿½ï¿½`,ï¿½fï¿½ï¿½ï¿½ï¿½Yï¿½Îï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èï¿½ï¿½`"ï¿½ ï¿½Hï¿½Kï¿½ï¿½ï¿½[ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½cbï¿½l#ï¿½jï¿½ï¿½Kï¿½ï¿½ï¿½[ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½RHï¿½WKï¿½ï¿½[[X\ï¿½Nï¿½9cï¿½9ï¿½czfï¿½ï¿½ï¿½ 9ï¿½ï¿½ï¿½ï¿½ÛÏ¹ï¿½ï¿½z*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ÛÏºhkï¿½ï¿½.ï¿½ï¿½#9/ï¿½ï¿½!ï¿½ï¿½ï¿½QPxï¿½ PSQ9ï¿½bHRH9ï¿½mï¿½ï¿½aï¿½kï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ÛÏï¿½ï¿½ï¿½ï¿½ï¿½9ab:`,ï¿½l z(ï¿½Oï¿½ï¿½ï¿½ÛÏºg 9ï¿½`ï¿½`h:-ï¿½zh$9ï¿½'ï¿½ï¿½ ï¿½ak9cï¿½9mï¿½ï¿½cyï¿½myï¿½ï¿½9aayï¿½(ï¿½ ï¿½{ï¿½#9.)ï¿½(j9ï¿½.ï¿½* ï¿½eï¿½ï¿½ï¿½ï¿½ÛÏº ï¿½z)ï¿½ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½ÛÏ¹mï¿½nï¿½ï¿½/.:!ï¿½ï¿½ï¿½ï¿½ï¿½9nm9nï¿½{ï¿½#9.ï¿½ï¿½(j9ï¿½*ï¿½/ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ï¿½9l#yè®¹kï¿½ï¿½ï¿½ ï¿½cï¿½ï¿½ï¿½i9ï¿½ï¿½9ï¿½kï¿½ï¿½ï¿½9bï¿½{ï¿½#9cï¿½9ï¿½czfï¿½ï¿½ï¿½ï¿½ÛÏQï¿½ï¿½ï¿½ï¿½ÛÏ9g*9ï£º ï¿½yï¿½ï¿½9oï¿½9i)ï¿½ï¿½,ï¿½`/ï¿½ï¿½xï¿½ ï¿½ï¿½ï¿½^\ï¿½[ï¿½ÎÂï¿½ï¿½ï¿½ï¿½ï¿½ï¿½9ab:`,ï¿½l z(ï¿½Hï¿½ï¿½;ï¿½gï¿½ï¿½ï¿½ï¿½9nm9ï¿½(ï¿½ ï¿½ynoï¿½.cï¿½aj9ï¿½n:(ï¿½ï¿½h$:* ï¿½ï¿½#9/ï¿½ï¿½.#yï¿½ï¿½yï¿½`ï¿½ï¿½/9l`9è®¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½RH9ï¿½mï¿½ï¿½aï¿½g 9ï¿½`ï¿½o-ï¿½bï¿½{ï¿½#9cï¿½9ï¿½czfï¿½ï¿½*ï¿½ï¿½caï¿½aj9nm9ï£¹a`ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½$:emï¿½leyï¿½&ï¿½!ï¿½ï¿½
-ÌIH9.ï¿½y."ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½i%ï¿½,ï¿½ï¿½`(ï¿½ï¿½L9ï¿½ï¿½z,ï¿½ï¿½-ï¿½ycï¿½9ï¿½czfï¿½ï¿½ï¿½#9n-ï¿½bï¿½HL8ï¿½ LH9ï¿½bycbï¿½l#ï¿½jï¿½9ï¿½ï¿½:eï¿½Uï¿½9d#9ï¿½iz-l9o-ï¿½ï¿½ ï¿½ï¿½ï¿½Kï¿½\ï¿½\ÎÂï¿½ï¿½[YNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È[ï¿½ï¿½ï¿½ï¿½\Ûï¿½Yï¿½\ï¿½Ûï¿½Xï¿½ï¿½ï¿½]Hï¿½ï¿½ï¿½Üï¿½ï¿½cï¿½9ï¿½czfï¿½ï¿½ï¿½j9kï¿½ï¿½ï¿½9ab:`,ï¿½l z(ï¿½yï¿½ï¿½:(dï¿½ï¿½#9ï¿½ï¿½ï¿½i&ï¿½`"ï¿½ï¿½mï¿½ï¿½aï¿½ï¿½m9d"9g*9d#9. 9hbï¿½gî¹§oï¿½."ï¿½ï¿½#9i)ï¿½nayï¿½ï¿½9caï¿½RH9ï¿½ï¿½bï¿½ï¿½ï¿½b: ï¿½xï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½9ï¿½+ï¿½cï¿½9ï¿½czfï¿½ï¿½ï¿½9ab:`,ï¿½l z(ï¿½yï¿½ï¿½:(dï¿½ï¿½#9ï¿½ï¿½ï¿½RH9ï¿½mï¿½ï¿½aï¿½ï¿½"9iï¿½ï¿½ï¿½{ï¿½"ydï¿½:*&9ï¿½ï¿½ï¿½jï¿½;ï¿½"9iï¿½ï¿½ï¿½{ï¿½"yï¿½m9d"9g*9. :-mï¿½ï¿½#:+ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½y`ï¿½ï¿½/.:`'ï¿½nï¿½ï¿½i)ï¿½nayï¿½ï¿½9caï¿½ï¿½#9d#9ï¿½`ï¿½ï¿½+ï¿½l#ï¿½jï¿½9ï¿½cxï¿½ zfcy/cï¿½ %ï¿½fï¿½ï¿½ï¿½ ï¿½`&yl#zg :)ï¿½zoï¿½9i)ï¿½ï¿½ï¿½bï¿½ï¿½ï¿½RH:*$ï¿½ï¿½ï¿½9mï¿½y/g:!ï¿½ï¿½eï¿½:aï¿½z)ï¿½xï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½ï¿½ï¿½ï¿½i&ï¿½`"ï¿½bï¿½ï¿½ ï¿½y.#yd#9ï¿½9ï¿½ ï¿½jï¿½9ï¿½cyï¿½*9ï¿½ï¿½9g*9d#9. 9hbï¿½nï¿½yï¿½oï¿½."ï¿½ï¿½#:+ï¿½ï¿½kï¿½ï¿½`$yï¿½ï¿½kï¿½d"9/g8ï¿½ y.ï¿½ï¿½.#ynlï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½ï¿½ï¿½z*ï¿½ï¿½ï¿½ È[ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½Üï¿½Ûï¿½\ï¿½[ï¿½ï¿½Hï¿½ï¿½ï¿½Üï¿½ï¿½."ï¿½n ï¿½ak9cï¿½9ï¿½ï¿½ï¿½khï¿½d$yï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½*ï¿½ï¿½ï¿½#ï¿½,ï¿½ybï¿½yï¿½ï¿½9ï¿½ï¿½z"!ï¿½leyï¿½&ï¿½ï¿½9ï¿½hï¿½o#ï¿½ï¿½ ï¿½+l;ï¿½#9ï¿½+ï¿½ ï¿½yï¿½$yï¿½ :aï¿½z)ï¿½yï¿½9ï¿½ï¿½yh,y/ï¿½ï¿½ï¿½ï¿½9.bï¿½. 8ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½z*ï¿½ï¿½ï¿½ ï¿½ï¿½+ï¿½ï¿½#9ï¿½ï¿½y.ï¿½ï¿½*ï¿½ï¿½ï¿½#ï¿½ï¿½ ï¿½ï¿½#yï¿½9ï¿½+ï¿½kï¿½ï¿½ï¿½#9ak9cï¿½9ï¿½ï¿½ï¿½khï¿½""z/ï¿½ï¿½. 9ï¿½({ï¿½#9d$yï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½câ¹¥hï¿½ï¿½-ï¿½ak:eï¿½ï¿½*ï¿½ï¿½ï¿½#ï¿½ï¿½mï¿½khï¿½,ï¿½yh,xï¿½ yï¿½*ï¿½/ï¿½ï¿½leyï¿½&ï¿½"!ï¿½ï¿½(ï¿½ï¿½kybï¿½yï¿½bï¿½ï¿½ ï¿½ï¿½ï¿½z*ï¿½ï¿½ï¿½ ï¿½ï¿½:*ï¿½ï¿½ï¿½(ï¿½ï¿½+ï¿½d)ï¿½ï¿½ ï¿½)ï¿½;ï¿½#9oï¿½9oï¿½9ï¿½ï¿½9ï¿½ï¿½yolzgï¿½ï¿½ ï¿½y`ï¿½z(j9ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½kn9ï¿½'ï¿½ï¿½ï¿½ï¿½khï¿½d$ykï¿½ï¿½emï¿½h,ydbï¿½ï¿½$9ï¿½/ï¿½ï¿½#9.)ï¿½*ï¿½ï¿½ï¿½#ï¿½."ï¿½kn9ï¿½'ï¿½ï¿½:*"9ï¿½jï¿½dï¿½9ï¿½ë¹ª&xï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½* ï¿½eï¿½ï¿½ ï¿½z)ï¿½ï¿½nï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Ü\ï¿½ï¿½\ï¿½Xï¿½[]Hï¿½ï¿½ï¿½Üï¿½ï¿½ak9cï¿½9l#yï¿½*ï¿½/ï¿½ï¿½* ï¿½eï¿½ï¿½ï¿½%ï¿½ï¿½-ï¿½aiyï¿½9è®¹kï¿½ï¿½ï¿½"ï¿½nï¿½ï¿½ï¿½ ï¿½ ï¿½z)ï¿½ï¿½nï¿½ï¿½jï¿½9.ï¿½ï¿½(j9ï¿½*ï¿½/ï¿½ï¿½noï¿½khï¿½ï¿½9ï¿½-ï¿½aiymï¿½i)ï¿½!ï¿½9è®¹kï¿½ï¿½ï¿½#:hï¿½:fï¿½ï¿½ï¿½ï¿½9l#y/cï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½#:* ï¿½eï¿½ï¿½ ï¿½z)ï¿½ï¿½nï¿½ï¿½ï¿½#yï¿½!ï¿½ï¿½9ï¿½+ï¿½ak9cï¿½9mï¿½cï¿½oï¿½ï¿½ï¿½%ï¿½jï¿½9nï¿½ï¿½è®¹kï¿½ï¿½ï¿½9ï¿½*ï¿½/ï¿½ï¿½* ï¿½eï¿½ï¿½aï¿½ï¿½ï¿½ ï¿½ ï¿½z)ï¿½ï¿½nï¿½ï¿½nï¿½ï¿½/.9b,ï¿½ï¿½ï¿½9nm;ï¿½#9ï¿½#ï¿½dlï¿½$eï¿½kï¿½ï¿½ï¿½-ï¿½mì¹£ï¿½9bczcï¿½ï¿½kï¿½ï¿½ï¿½(ï¿½ ï¿½{ï¿½#9ak9cï¿½9ï¿½*ï¿½/ï¿½ï¿½ajynm9ï¿½9ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½9l#yï¿½"y/ï¿½zfï¿½;ï¿½#:hï¿½:fï¿½ï¿½/ ï¿½/cï¿½ï¿½ ï¿½ï¿½ï¿½YÎï¿½i$9nï¿½ï¿½mì¹£ï¿½y.ï¿½ï¿½ï¿½*ï¿½/ï¿½ï¿½. 9nm9ï¿½9c!yn+zh$:* ï¿½ï¿½#9ï¿½ï¿½z`dï¿½b,9ï¿½`ï¿½`&y. 9kï¿½ï¿½ï¿½"yï¿½-ï¿½ai{ï¿½#9oï¿½ï¿½(ï¿½yï¿½ï¿½9ï¿½jxï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½Qï¿½ï¿½[ï¿½ï¿½ï¿½[Y\ï¿½Xï¿½[ï¿½\ï¿½ï¿½]\ï¿½Hï¿½Xï¿½Z\ï¿½ï¿½ï¿½Üï¿½ï¿½+ï¿½ï¿½ï£¹g"ï¿½ï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½ ï¿½yg*9ï£º ï¿½yn ï¿½h-:,ï¿½ï¿½b,9i%ï¿½g"ï¿½ak9cï¿½: ï¿½yï¿½j9ï¿½:aï¿½z'ï¿½ymï¿½yamï¿½ï¿½#9cï¿½9ï¿½czfï¿½ï¿½.ï¿½ï¿½&gï¿½ï¿½xï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½Qï¿½ï¿½"9ï£¹g"ï¿½kf:*%ï¿½ï¿½ï¿½z+b{ï¿½"z+ï¿½ï¿½ggï¿½ï£¹g"ï¿½ak9cï¿½: ï¿½yg*9ï£º ï¿½yn ï¿½h-9.ï¿½9ï¿½$ï¿½ï¿½ ï¿½cï¿½9ï¿½czfï¿½ï¿½ï¿½Qï¿½9.ï¿½ï¿½&gï¿½à®ï¿½{ï¿½#9ï¿½ï¿½ï¿½o-HQï¿½9.ï¿½ï¿½(jH: ï¿½ycï¿½9ï¿½czfï¿½ï¿½cï¿½9ï¿½hï¿½ ï¿½yï¿½j8ï¿½ ï¿½ï¿½mï¿½cï¿½9ï¿½czfï¿½ï¿½Qï¿½9ï¿½,ï¿½-ï¿½9ï¿½`ï¿½ï¿½#:`&ï¿½n.:h$9ï¿½.ï¿½fï¿½9i*ycï¿½9ï¿½hï¿½ ï¿½yn ï¿½ï¿½:-l9d$xï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½cï¿½9ï¿½czfï¿½ï¿½g*9ï£¹g"ï¿½eï¿½ï¿½.ï¿½ï¿½b!ï¿½nï¿½ï¿½ï¿½#:+ï¿½ï¿½ï£¹g"ï¿½ï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½.#zg :)ï¿½yï¿½ï¿½ï¿½c+ï¿½l,z ï¿½z,ï¿½ï¿½`,ï¿½cï¿½9ï¿½hï¿½ï¿½ 9i)ï¿½ak9cï¿½8ï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½i%ï¿½,ï¿½ï¿½,ï¿½ï¿½-ï¿½Hï¿½[ï¿½ï¿½ï¿½ï¿½ÜZYÛï¿½]ï¿½^Z[ï¿½Èï¿½ï¿½Üï¿½ï¿½i%ï¿½g"ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½g*9cï¿½9ï¿½hï¿½ ï¿½yn ï¿½,ï¿½ï¿½`,ï¿½aï¿½zhcz-ï¿½z`cï¿½,ï¿½ï¿½aï¿½aï¿½zhc{ï¿½#:`&ï¿½n.:(ï¿½ï¿½)ï¿½ï¿½à®º,ï¿½ï¿½aï¿½yï¿½`yaiyï¿½9i&ï¿½h+z*"ï¿½&gï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½#9i%ï¿½,ï¿½ï¿½ï¿½#yï¿½ï¿½ï¿½ï¿½!ï¿½/ï¿½ï¿½!ê¹­mï¿½i%ï¿½ï¿½9ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½ï¿½#9iï¿½ï¿½,ï¿½z$"ï¿½oï¿½ï¿½ï¿½ ykï¿½:`e9ï¿½byi)ï¿½gï¿½ï¿½gï¿½aï¿½xï¿½ ï¿½ï¿½#:,ï¿½ï¿½-ï¿½xï¿½#y.ï¿½ï¿½(j:,ï¿½ï¿½`,ï¿½aï¿½zhcyi)ï¿½ï¿½ï¿½:,ï¿½ï¿½aï¿½ï¿½#:`&ï¿½n.:(ï¿½ï¿½)ï¿½ï¿½à®¹i&ï¿½h+z*"ï¿½&gï¿½ï¿½ ï¿½i%ï¿½,ï¿½ï¿½bï¿½yd$yï¿½+ï¿½)ï¿½9kï¿½ï¿½..ï¿½bï¿½ï¿½,ï¿½ï¿½aï¿½yï¿½`yd$yï¿½:aï¿½z)ï¿½yï¿½!ï¿½ï¿½&xï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½. 9kï¿½ï¿½i$9nï¿½ï¿½ï¿½#9ï¿½"yoï¿½9i&ï¿½ï¿½"zc(ï¿½ï¿½:  zieyï¿½ yï¿½9abzhiï¿½ï¿½#9.ï¿½ï¿½(j9cï¿½ï¿½ï¿½ydï¿½z,ï¿½.#zc+ï¿½ï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½ï¿½Hï¿½[ï¿½ï¿½ï¿½Yï¿½ï¿½[ï¿½ï¿½YY[[ÜHï¿½ï¿½ï¿½Üï¿½ï¿½. 9ï¿½+ï¿½l"9à®RH9ï¿½mï¿½ï¿½aï¿½*+z*"9ï¿½:jï¿½:`'ï¿½*&9ï¿½ï¿½ï¿½jï¿½;ï¿½#9`ï¿½ï¿½/.:`'ï¿½nï¿½ï¿½ï¿½ï¿½9. :"+ï¿½SH9oï¿½ï¿½."ï¿½ï¿½n9c`y`#{ï¿½#9ï¿½+ï¿½RH9bï¿½:`'ï¿½fj9ï¿½:eï¿½:cmzfï¿½ï¿½.ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½{ï¿½":jï¿½:h.ï¿½kï¿½:*&9ï¿½ï¿½ï¿½jï¿½;ï¿½"yï¿½+ï¿½RH9bï¿½:`'ï¿½fj9.#ycï¿½ï¿½ï¿½%ï¿½ï¿½.ï¿½ï¿½:fï¿½ï¿½.ï¿½ï¿½ï¿½#9ï¿½,Hï¿½ï¿½9ï¿½mï¿½bï¿½ï¿½hï¿½ï¿½ï¿½ y."yï¿½'ï¿½ï¿½ yï£¹abyï¿½'ï¿½ï¿½(ï¿½ï¿½ ï¿½ï¿½ï¿½QPHLï¿½H9ï¿½+z/"Hï¿½Lï¿½:*&9ï¿½ï¿½ï¿½jï¿½;ï¿½#:+ï¿½ï¿½RH9ï¿½(ygï¿½ï¿½*$ï¿½ï¿½ï¿½:`'ï¿½nï¿½ï¿½i)ï¿½nayï¿½ï¿½9caï¿½ï¿½ ï¿½ï¿½ï¿½bcy/ï¿½ï¿½.#yï¿½ï¿½yï¿½`ï¿½ï¿½#9nï¿½9eaï¿½ï¿½&ï¿½ï¿½&ï¿½ï¿½ï¿½9ï¿½(ï¿½ï¿½ ï¿½ï¿½ï¿½YÎï¿½iï¿½ï¿½ï¿½ï¿½ï¿½H9ï¿½+ï¿½nï¿½n*ï¿½ï¿½#ï¿½H9l,yï¿½+ï¿½ï¿½ï¿½z`ï¿½ï¿½ï¿½9`ï¿½yï¿½ï¿½ycï¿½;ï¿½#9`ï¿½yï¿½ï¿½ycï¿½:-ï¿½ï¿½i)ï¿½-ï¿½ï¿½oï¿½ï¿½ï¿½#9nï¿½n*ï¿½ï¿½b9ï¿½ï¿½l,z-ï¿½ï¿½jï¿½8ï¿½ ï¿½ï¿½Bï¿½Bï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LKLNï¿½ï¿½ÂXY[ï¿½Nï¿½ï¿½ï¿½9eï¿½ï¿½khï¿½acyï¿½kï¿½bmyï¿½ï¿½:jï¿½;ï¿½ y. 9ï¿½ï¿½ï¿½ï¿½'ï¿½ï¿½ï¿½jï¿½9ï¿½kï¿½Uï¿½9ï¿½:fi9ï¿½kï¿½ï¿½ yhjï¿½ï¿½kï¿½aj9ï¿½`yï¿½"Èï¿½Xï¿½Îï¿½g"ï¿½ï¿½ï¿½9ï¿½.9ï¿½:jï¿½: ï¿½yï¿½kï¿½Uï¿½9kï¿½ï¿½n ï¿½ï¿½+9khï¿½ï¿½ï¿½ï¿½ ï¿½zacyï¿½oï¿½ï¿½9a`ï¿½ï¿½#9bmz*+yï¿½ï¿½ï¿½.ï¿½y/ï¿½ï¿½ï¿½ï¿½:jï¿½8ï¿½ ï¿½jï¿½9ï¿½kï¿½Uï¿½9ï¿½$9à®¹cï¿½9ï¿½hï¿½ï¿½hï¿½ï¿½-ï¿½ï¿½ 9ï¿½zeï¿½:*lzhc;ï¿½#9ï¿½'ï¿½ï¿½ï¿½ï¿½#:fi9ï¿½kï¿½ï¿½#ydï¿½8ï¿½#9hjï¿½ï¿½kï¿½ï¿½#yï¿½+ï¿½aizeï¿½9oï¿½y/ï¿½*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Nï¿½ï¿½ kï¿½d":,ï¿½yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½XY[ï¿½ï¿½[YNï¿½Yï¿½ï¿½Xï¿½[Nï¿½ï¿½ï¿½Yï¿½[ï¿½ï¿½\ï¿½ï¿½Yï¿½ï¿½Xï¿½[SXï¿½[ï¿½ï¿½aizeï¿½ï¿½ï¿½Yï¿½Îï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½Uï¿½ï¿½WKï¿½ï¿½[[X\ï¿½Nï¿½ï¿½9g"ï¿½ï¿½ï¿½9ï¿½.9ï¿½:jï¿½: ï¿½yï¿½kï¿½Uï¿½9ak9dbï¿½ï¿½ï¿½ï¿½9nm9ï¿½+9.ï¿½9khï¿½acyï¿½kï¿½à®¹ï¿½ï¿½ï¿½ ï¿½Hï¿½ï¿½9a`ï¿½ï¿½#:/ ï¿½cï¿½ï¿½nm9d#9ï¿½'ï¿½ï¿½$:emï¿½Lï¿½{ï¿½#9bmz*+yï¿½ï¿½ï¿½.ï¿½y/ï¿½ï¿½eï¿½ï¿½khï¿½ï¿½ï¿½:jï¿½8ï¿½ ï¿½fï¿½:$eï¿½jï¿½9ï¿½kï¿½Uï¿½9ï¿½ yï¿½"y.ï¿½ï¿½ï¿½n9ï¿½yï¿½-ML:$+9.ï¿½ï¿½ï¿½#ï¿½ï¿½ÛÏºfi9ï¿½kï¿½ï¿½ï¿½ï¿½ÛÏ¸ï¿½ Oï¿½ï¿½ÛÏ¹hjï¿½ï¿½kï¿½ï¿½ï¿½ï¿½ÛÏ¸ï¿½ Oï¿½ï¿½ÛÏ¹ï¿½ï¿½ï¿½b*yï¿½ï¿½ï¿½ï¿½ï¿½ÛÏ¹ï¿½byd#z*gï¿½ï¿½$9à®¹ï¿½ï¿½9ï¿½bï¿½oï¿½ykn9ï¿½9ï¿½ï¿½z,ï¿½ï¿½gî¹§+9bï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½^\ï¿½[ï¿½ÎÂï¿½ï¿½9ï¿½+9khï¿½ï¿½ï¿½ï¿½b*yï¿½ï¿½ï¿½"9nm9c%ï¿½ï¿½"yï¿½!:`eKï¿½	{ï¿½#9g*9cï¿½: ï¿½zjï¿½9ï¿½kï¿½Uï¿½9.+ylk9.+y."ï¿½ï¿½-9ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½fi9ï¿½kï¿½ï¿½ï¿½ybcz,ï¿½ï¿½`,ï¿½ï¿½cyï¿½"zacyï¿½kï¿½,ï¿½ï¿½ï¿½/;ï¿½&ï¿½fi9ï¿½kï¿½oï¿½: ï¿½y`ï¿½yï¿½ ï¿½ï¿½bzhcz*ï¿½ï¿½fc{ï¿½#:g 8ï¿½#9hjï¿½ï¿½kï¿½ï¿½#yï¿½cyï¿½ï¿½ï¿½'ï¿½ï¿½hï¿½ï¿½lï¿½b*xï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½+ï¿½ï¿½cygï¿½ï¿½Uï¿½9.#zacyï¿½kï¿½ï¿½#9ï¿½ï¿½9ï¿½ï¿½yl!ï¿½ï¿½-ï¿½ï¿½ï¿½aï¿½yï¿½ï¿½yai{ï¿½#:emï¿½ï¿½'ï¿½)!ï¿½b*yï¿½b9ï¿½ï¿½9ï¿½ï¿½9/lï¿½ï¿½#:`jyd"9.#yï¿½)zg 9ï¿½ï¿½aï¿½yï¿½`yï¿½9ï¿½ï¿½z,ï¿½ï¿½ !xï¿½ ï¿½ï¿½ï¿½Kï¿½\ï¿½\ÎÂï¿½ï¿½[YNï¿½ï¿½fi9ï¿½kÈ[ï¿½ï¿½ï¿½^Q]ï¿½Y[ï¿½ï¿½ï¿½ï¿½Üï¿½ï¿½ ï¿½yï¿½j9ï¿½%ï¿½Uï¿½:acyï¿½o: ï¿½yb*yï¿½9b!ï¿½ï¿½c:nï¿½ï¿½ ï¿½fi9ï¿½kï¿½ï¿½ï¿½yï¿½mï¿½i*{ï¿½#: ï¿½y`ï¿½yï¿½ ï¿½!ï¿½bï¿½yï¿½hï¿½ï¿½ï¿½zacyï¿½o:aï¿½zhcyoï¿½:eï¿½ï¿½ï¿½ï¿½8ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½fi9ï¿½kï¿½ï¿½+ï¿½ï¿½!ï¿½ak9cï¿½9ï¿½%ï¿½Uï¿½9l!ï¿½mï¿½kï¿½ï¿½dbï¿½ï¿½: ï¿½yb*yoï¿½ï¿½ ï¿½y`ï¿½y.+xï¿½#9ï¿½hï¿½fi8ï¿½#yï¿½:`ï¿½ï¿½. 9i*xï¿½ ï¿½fi9ï¿½kï¿½ï¿½ï¿½yï¿½mï¿½i*{ï¿½#: ï¿½yï¿½j:eï¿½ï¿½ï¿½ï¿½9`ï¿½yï¿½ ï¿½!ï¿½bï¿½z*ï¿½ï¿½fcyï¿½byd#:acyï¿½kï¿½ï¿½:aï¿½zhcxï¿½ ï¿½ï¿½ yï¿½"y.ï¿½ï¿½"ï¿½yg*:fi9ï¿½kï¿½ï¿½ï¿½ybcyï¿½ z ï¿½{ï¿½#9clï¿½.ï¿½ï¿½ï¿½"zacyï¿½kï¿½,ï¿½ï¿½ï¿½/8ï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½/h9ï¿½"y. :haï¿½L9a`ï¿½ï¿½:&"ï¿½ï¿½ï¿½;ï¿½#9b!ï¿½."ï¿½H9a`ï¿½ï¿½9ï¿½ï¿½: ï¿½yb!ï¿½ï¿½iï¿½/h;ï¿½":acyï¿½kï¿½ï¿½"{ï¿½#9bjy."ï¿½ï¿½:&"ï¿½ï¿½ï¿½9l,y`/MH9a`ï¿½.ï¿½ï¿½ï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½hjï¿½ï¿½kÈ[ï¿½ï¿½ï¿½]ï¿½Y[ï¿½ï¿½Xï¿½Ý\ï¿½Hï¿½ï¿½ï¿½Üï¿½ï¿½fi9ï¿½kï¿½oï¿½;ï¿½#: ï¿½y`ï¿½zaï¿½yï¿½ï¿½9ï¿½,ï¿½fï¿½fi9ï¿½kï¿½bcyï¿½-9ï¿½ï¿½ï¿½ï¿½:`cï¿½ï¿½"ï¿½ï¿½ ï¿½kï¿½9ï¿½$9hjï¿½ï¿½kï¿½ï¿½#9ï¿½cy.ï¿½ï¿½(j:acyï¿½kï¿½ï¿½ï¿½ï¿½ï¿½"yï¿½#yi,yï¿½+:aï¿½xï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½hjï¿½ï¿½kï¿½ï¿½!ï¿½ï¿½9ï¿½+ï¿½fi9ï¿½kï¿½oï¿½: ï¿½y`ï¿½yfï¿½caï¿½b,:fi9ï¿½kï¿½bcy`ï¿½yï¿½/9ï¿½:`cï¿½ï¿½"ï¿½ï¿½ ï¿½"ï¿½z ï¿½y`ï¿½z ï¿½zh!ï¿½b*yhjï¿½ï¿½kï¿½ï¿½#9.ï¿½ï¿½(j9ï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½.#y/aï¿½h&9b,9.ï¿½ï¿½acyï¿½kï¿½ï¿½#: ï¿½yï¿½j9n ï¿½`/9.gï¿½fï¿½oï¿½ycï¿½ï¿½ï¿½ï¿½;ï¿½#9ï¿½+ï¿½ï¿½ 9ï¿½!ï¿½ï¿½ï¿½ï¿½ï¿½9ï¿½ï¿½9ï¿½ï¿½xï¿½ ï¿½cï¿½y.bï¿½ï¿½,yà®¸ï¿½#:,ï¿½9ï¿½kï¿½ï¿½#{ï¿½#9.ï¿½ï¿½(j: ï¿½y`ï¿½y."ï¿½-ï¿½:-ï¿½z`cï¿½acyï¿½kï¿½aï¿½zhcxï¿½ ï¿½ï¿½ï¿½YÎï¿½h&9.ï¿½ï¿½H9a`ï¿½/aï¿½ ï¿½yï¿½j:-ï¿½9.ï¿½ï¿½9a`ï¿½ï¿½#9ï¿½byï¿½ï¿½:&iï¿½.ï¿½ï¿½ï¿½9a`ï¿½ï¿½ ï¿½ï¿½bz ï¿½yï¿½j9ï¿½,ï¿½fï¿½/ï¿½ï¿½oc:(ï¿½:`&y`"ï¿½mï¿½-ï¿½{ï¿½#9l,ycï¿½ï¿½ï¿½#9hjï¿½ï¿½kï¿½ï¿½#xï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½ï¿½ï¿½ï¿½b*yï¿½È[ï¿½ï¿½ï¿½]ï¿½Y[ï¿½ZY[ï¿½ï¿½ï¿½Üï¿½ï¿½ï¿½ï¿½ï¿½nm:acyï¿½o9ï¿½: ï¿½yb*pï¿½ï¿½ï¿½ï¿½bcz ï¿½y`ï¿½{ï¿½#9.ï¿½ï¿½(j8ï¿½#9.ï¿½yï¿½ï¿½`ï¿½z,ï¿½ï¿½`,ï¿½ï¿½#9ï¿½ï¿½ï¿½nm: ï¿½yï¿½ï¿½ï¿½fï¿½i&ï¿½l$yï¿½oï¿½b!ï¿½ï¿½ï¿½9ï¿½9ï¿½-ï¿½ï¿½ï¿½ï¿½#xï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½b*yï¿½ï¿½ï¿½'ynm9nï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½z ï¿½yb*H0ï¿½ï¿½: ï¿½yï¿½j9ï¿½ï¿½`ï¿½H0ï¿½ï¿½L	xï¿½ ï¿½""y/ï¿½ï¿½ï¿½&ï¿½ ï¿½yï¿½j9ï¿½ï¿½`ï¿½HL9a`ï¿½ï¿½#9nm:acyï¿½kï¿½ï¿½ï¿½H9a`ï¿½ï¿½#9ï¿½ï¿½ï¿½b*yï¿½ï¿½l,yï¿½+ï¿½Ixï¿½ ï¿½ï¿½ï¿½ï¿½b*yï¿½ï¿½-ï¿½ï¿½jï¿½9.ï¿½ï¿½(j:acyï¿½kï¿½-ï¿½ï¿½,d9cï¿½ï¿½ï¿½#9/aï¿½.gï¿½)ï¿½yï¿½ï¿½9ï¿½#ï¿½ï¿½+ï¿½d)ï¿½cï¿½ï¿½ï¿½ yï¿½8ï¿½ ï¿½ï¿½ï¿½YÎï¿½ï¿½ï¿½ï¿½ ï¿½yï¿½j9ï¿½ï¿½ï¿½ï¿½$9. 9ï¿½ï¿½ï¿½aï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½#9ï¿½ï¿½ï¿½b*yï¿½ï¿½l,yï¿½+ï¿½ï¿½#9ï¿½ï¿½ï¿½aï¿½yh,zak9ï¿½ï¿½ï¿½#xï¿½ ï¿½,ï¿½ï¿½L:$+9ï¿½9ï¿½/ï¿½ï¿½#9ï¿½ï¿½ï¿½nm9ï¿½ï¿½ï¿½aï¿½HH:$+;ï¿½#9h,zak9ï¿½ï¿½l,yï¿½+ï¿½Ixï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½ï¿½+ï¿½ï¿½cygï¿½ï¿½Uï¿½ï¿½[ï¿½ï¿½ï¿½Xï¿½ï¿½[][][ï¿½ï¿½Uï¿½ï¿½ï¿½ï¿½Üï¿½ï¿½.#zacyï¿½kï¿½ï¿½ yl!ï¿½ ï¿½yb*yï¿½ï¿½9ï¿½ï¿½yaï¿½yï¿½ï¿½yaiyï¿½Uï¿½:hgï¿½gï¿½ï¿½ï¿½#:`#ï¿½`cï¿½)!ï¿½b*z+ï¿½ï¿½,ï¿½ï¿½ï¿½(ï¿½emï¿½ï¿½'ï¿½hï¿½ï¿½emï¿½ï¿½#:`jyd":emï¿½ï¿½'ï¿½ï¿½ï¿½z,ï¿½ï¿½ !xï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½+ï¿½ï¿½cygï¿½ï¿½Uï¿½9.#ykï¿½ï¿½ï¿½'ï¿½acyï¿½kï¿½ï¿½#: #9ï¿½+ï¿½l!ï¿½ï¿½-ï¿½b,9ï¿½: ï¿½yb*ydï¿½9b*yï¿½kï¿½aj:`ï¿½9aï¿½yï¿½ï¿½yaiygï¿½aï¿½{ï¿½#:!ï¿½bï¿½z)!ï¿½b*yhï¿½ï¿½emï¿½ï¿½ ï¿½ï¿½ï¿½9l#yg,;ï¿½#:acyï¿½kï¿½gï¿½ï¿½Uï¿½9ï¿½ ï¿½kï¿½ï¿½ï¿½'ï¿½l!ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½o9ï¿½iï¿½ï¿½ yï¿½"y.ï¿½ï¿½ï¿½ ï¿½emï¿½ï¿½'ï¿½ #:* ;ï¿½#9ï¿½+ï¿½ï¿½cygï¿½ï¿½`&ï¿½n.9ï¿½/yh,zak9ï¿½ï¿½:jï¿½;ï¿½#9/aï¿½.#z`jyd":g :)ï¿½yï¿½ï¿½aï¿½yï¿½`yï¿½9ï¿½ï¿½z,ï¿½ï¿½.ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½ï¿½ï¿½fï¿½ï¿½ ï¿½ï¿½&ï¿½acyï¿½kï¿½gï¿½ï¿½ï¿½+ï¿½ï¿½ï¿½ï¿½nm9ï¿½%ï¿½-l9. :nï¿½fï¿½ï¿½#9ï¿½+ï¿½ï¿½cygï¿½ï¿½ï¿½+ï¿½+ï¿½ï¿½fï¿½ï¿½ ï¿½. 9ï¿½ï¿½9oï¿½9."ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½i)ï¿½ï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½acyï¿½kï¿½ï¿½È[ï¿½ï¿½ï¿½^[ï¿½]ï¿½][Èï¿½ï¿½Üï¿½ï¿½ak9cï¿½9ï¿½%ï¿½Uï¿½9l!ï¿½i&ï¿½l$yï¿½ï¿½9/ï¿½ï¿½ï¿½9ï¿½lï¿½b*yï¿½*9ï¿½ï¿½:acyï¿½o: ï¿½yb*{ï¿½#9ï¿½n9`/:-ï¿½ï¿½jï¿½9.ï¿½ï¿½(j9b!ï¿½ï¿½iï¿½ ï¿½yï¿½lz-ï¿½ï¿½i&ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½acyï¿½kï¿½ï¿½ï¿½ï¿½'yï¿½ï¿½ï¿½ ï¿½z ï¿½yb*H0ï¿½ï¿½9ï¿½ï¿½ï¿½ ï¿½yï¿½ï¿½:i&;ï¿½"Tï¿½ï¿½"pï¿½ï¿½L	xï¿½ ï¿½/ï¿½ï¿½iï¿½ï¿½Tï¿½9à®9a`ï¿½ï¿½#9ï¿½ï¿½ï¿½ ï¿½zacHï¿½9a`ï¿½ï¿½#:acyï¿½kï¿½ï¿½ï¿½l,yï¿½+ï¿½L	xï¿½ ï¿½jï¿½:acyï¿½kï¿½ï¿½ï¿½.#y. 9kï¿½ï¿½ï¿½+ï¿½ioy.ï¿½ï¿½ï¿½#:g 9è®º*ï¿½yak9cï¿½9ï¿½+ï¿½d)ï¿½/ï¿½yï¿½fz-ï¿½ï¿½i(:,ï¿½ï¿½aï¿½yaï¿½yï¿½ï¿½z,ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½. 9`"ï¿½.ï¿½ï¿½ï¿½":%ï¿½ï¿½L:$+;ï¿½#9ï¿½ï¿½ï¿½ï¿½":"ï¿½Hï¿½:$+9g*9ï¿½'ï¿½ï¿½.ï¿½,ï¿½ï¿½ï¿½":acyï¿½kï¿½ï¿½"{ï¿½#9bjHï¿½:$+9kf:-mï¿½/ï¿½ï¿½ï¿½"9aï¿½yï¿½ï¿½z,ï¿½ï¿½ï¿½"xï¿½ ï¿½ï¿½Bï¿½Bï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LKLMÈï¿½ÂXY[ï¿½Nï¿½ï¿½ï¿½nyï¿½ï¿½ï¿½ï¿½ï¿½yi)ï¿½ï¿½#ycï¿½9nï¿½:* ï¿½eï¿½ï¿½ï¿½ zfï¿½ï¿½bï¿½z.ï¿½/ï¿½ï¿½ï¿½ï¿½zcï¿½9ï¿½oï¿½hï¿½ï¿½ï¿½#ï¿½9kï¿½ï¿½cï¿½9nï¿½:iï¿½ï¿½ï¿½mï¿½amï¿½(gHï¿½ï¿½Xï¿½Îï¿½cï¿½ï¿½aj9ï¿½ ï¿½fï¿½ï¿½bï¿½z.ï¿½n ï¿½h-9ï¿½$:emï¿½ï¿½/ï¿½ï¿½ï¿½yolzgï¿½ï¿½ï¿½#9ï¿½nyï¿½ï¿½ï¿½ï¿½ï¿½yi)ï¿½naybbï¿½ï¿½&ï¿½fï¿½ï¿½ï¿½a9.ï¿½ï¿½ï¿½ï¿½z,ï¿½;ï¿½#9cï¿½9ï¿½hï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ yï¿½hï¿½ï¿½yï¿½bzfï¿½ï¿½ï¿½a9.ï¿½ï¿½nï¿½:iï¿½ï¿½ï¿½mï¿½amï¿½(gxï¿½ ï¿½ï¿½+9ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½8ï¿½#9ï¿½#yeï¿½ï¿½ï¿½#yï¿½b9ï¿½ï¿½z"!ï¿½/ï¿½ï¿½ï¿½ï¿½zcï¿½:hï¿½:fï¿½ï¿½*ey/,8ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Nï¿½ï¿½,ï¿½z*"ï¿½fï¿½:*ï¿½ï¿½ï¿½XY[ï¿½ï¿½[YNï¿½Yï¿½ï¿½Xï¿½[Nï¿½ï¿½[ï¿½\ï¿½YYX]Hï¿½Yï¿½ï¿½Xï¿½[SXï¿½[ï¿½ï¿½`,ï¿½fï¿½ï¿½ï¿½ï¿½Yï¿½Îï¿½ï¿½ï¿½ï¿½[ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½fï¿½ï¿½bï¿½z.âWKï¿½ï¿½[[X\ï¿½Nï¿½9ï¿½nyï¿½ï¿½ï¿½ï¿½ï¿½ykï¿½ï¿½n ï¿½ï¿½+9."ykhï¿½l!ï¿½i)ï¿½nayï¿½+ï¿½ï¿½&ï¿½cï¿½9ï¿½hï¿½/ï¿½ï¿½ï¿½ï¿½yeaï¿½ï¿½ï¿½z,ï¿½:aï¿½ï¿½ï¿½#9nlï¿½gaï¿½fcynaz`eM{ï¿½gï¿½ï¿½	xï¿½ ï¿½b!ï¿½ï¿½ï¿½9n*ï¿½*ï¿½yà®»ï¿½#:`&yï¿½ï¿½ï¿½ï¿½ÛÏ¹ï¿½#yeï¿½ï¿½ï¿½ï¿½ï¿½ÛÏ¹..ï¿½fï¿½9ï¿½+ï¿½[ï¿½[ï¿½9ï¿½.yï¿½/ï¿½oï¿½ï¿½ï¿½ÛÏ¹nï¿½ï¿½kf9cï¿½ï¿½c%ï¿½ï¿½ï¿½ï¿½ÛÏ¹.#zh!ï¿½ï¿½#9.ï¿½ycï¿½.+yg"ï¿½fï¿½ï¿½bï¿½z.ï¿½ï¿½ï¿½ï¿½ï¿½+ybï¿½9bï¿½ï¿½l#ï¿½!ï¿½9n ï¿½ch9ï¿½`yi,xï¿½ ï¿½ï¿½ï¿½^\ï¿½[ï¿½ÎÂï¿½ï¿½nyï¿½ï¿½ï¿½ï¿½ï¿½ycï¿½9ï¿½hï¿½/ï¿½ï¿½ï¿½ï¿½zcï¿½9ï¿½#yeï¿½ï¿½naynï¿½ï¿½M{ï¿½gï¿½ï¿½	{ï¿½#:fï¿½ï¿½ï¿½ï¿½ï¿½"!ï¿½ï¿½hï¿½ï¿½yï¿½(yï¿½a9nï¿½:(gyï¿½â¹§ 9i)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½fï¿½ï¿½bï¿½z.ï¿½aj9ï¿½ ï¿½ï¿½ï¿½`#ï¿½ï¿½ï¿½få¹£ yï¿½9ï¿½$:emï¿½ï¿½#9/aï¿½`'ï¿½nï¿½ï¿½.#yiï¿½ï¿½h$9ï¿½'ï¿½ï¿½#\ï¿½H:g :fcy/cï¿½nï¿½ï¿½kf9ï¿½-9/cxï¿½ ï¿½ï¿½ï¿½ï¿½b!ï¿½ï¿½ï¿½9n*ï¿½nï¿½+l:eï¿½9ï¿½ï¿½:.ï¿½ï¿½*QÐ9nï¿½ï¿½kf9cï¿½ï¿½c%ï¿½`,ï¿½nï¿½ï¿½ï¿½#9à®¹."ï¿½cbï¿½nm:* ï¿½eï¿½ï¿½fç¹®ï¿½ï¿½ï¿½:eï¿½:cmyï¿½!ï¿½ï¿½&xï¿½ ï¿½ï¿½ï¿½Kï¿½\ï¿½\ÎÂï¿½ï¿½[YNï¿½ï¿½ï¿½#yeï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Ü\ï¿½ï¿½]ï¿½ï¿½ï¿½Üï¿½ï¿½kï¿½ï¿½ï¿½-ï¿½..ï¿½bï¿½yï¿½&ï¿½l$ycï¿½ï¿½ab9ï¿½oï¿½*ï¹£ï¿½z,ï¿½9ï¿½n:aï¿½ï¿½ï¿½:(c9à®»ï¿½#:`&ï¿½n.9ï¿½o9ï¿½'ï¿½g*9ï¿½`ï¿½ï¿½ï¿½ï¿½g 9ï¿½`ï¿½/byo,yï¿½%ï¿½nï¿½ï¿½kf:`cï¿½jï¿½9ï¿½`ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½#9ï¿½#yeï¿½ï¿½ï¿½#yï¿½!ï¿½dï¿½yï¿½c9nï¿½;ï¿½"9iï¿½ï¿½ï¿½nyï¿½ï¿½ï¿½ï¿½ï¿½{ï¿½"z`&ï¿½ï¿½ï¿½y/ï¿½ï¿½ï¿½ï¿½yeaï¿½ï¿½&ï¿½l$ycï¿½ï¿½ï¿½+9ï¿½oï¿½*ï¿½ï¿½9ï¿½ï¿½z,ï¿½9ï¿½n:aï¿½ï¿½ï¿½ ï¿½ï¿½#yeï¿½ï¿½`&ï¿½n.9ï¿½o9ï¿½'ï¿½g*9ï¿½`ï¿½ï¿½ï¿½ï¿½g 9ï¿½`ï¿½.#yiï¿½ï¿½h$9ï¿½'ï¿½ï¿½#9ï¿½%ï¿½dï¿½yï¿½c9nï¿½9nï¿½ï¿½kf9ï¿½-9/cz`cï¿½jï¿½9ï¿½`ï¿½ï¿½ ï¿½l#y/ï¿½ï¿½ï¿½ï¿½yeaï¿½ #:* ;ï¿½#9ï¿½#yeï¿½ï¿½ï¿½ï¿½9ï¿½ï¿½yolzgï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½"!ï¿½ï¿½lï¿½b*xï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½i$9nï¿½ï¿½cï¿½ï¿½ï¿½+:-ï¿½ï¿½hï¿½ï¿½ï¿½d9/ï¿½ï¿½ï¿½ï¿½yeaï¿½*ï¿½ï¿½)ï¿½z,ï¿½ï¿½L:haï¿½&ï¿½ï¿½ï¿½#9/aï¿½ï¿½'ï¿½ï¿½#ï¿½.#yioyï¿½.yï¿½$9cï¿½,ï¿½ï¿½ï¿½:haï¿½ï¿½#9/ï¿½ï¿½ï¿½ï¿½yeaï¿½fï¿½9ï¿½i9l$y.ï¿½ï¿½ï¿½:haï¿½ï¿½9ï¿½-ï¿½aixï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½ï¿½ï¿½`#ï¿½ï¿½È[ï¿½ï¿½ï¿½[ï¿½]ï¿½][Ûï¿½]Hï¿½ï¿½ï¿½Üï¿½ï¿½ï¿½ï¿½9ï¿½+ï¿½ï¿½ï¿½9ï¿½ï¿½:(dï¿½ï¿½%ï¿½ï¿½(ï¿½dï¿½yg*9n ï¿½h-9.+yï¿½`9/e9ï¿½:bï¿½ï¿½e+ï¿½ï¿½ï¿½9/ï¿½ï¿½ï¿½#9ï¿½*9/ï¿½ï¿½(hzaï¿½ï¿½. :h!yï¿½ï¿½:(dï¿½ï¿½+ï¿½d)ï¿½mï¿½`,ï¿½aiy..ï¿½ï¿½`yn ï¿½h-8ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½`#ï¿½ï¿½ï¿½ï¿½!ï¿½ï¿½ï¿½:hgï¿½ï¿½(ï¿½dï¿½{ï¿½"9iï¿½ï¿½fï¿½ï¿½bï¿½z.ï¿½ï¿½"y/e9ï¿½m:jï¿½9n ï¿½h-;ï¿½"9ï¿½`9ï¿½"yï¿½ï¿½:.ï¿½bï¿½ï¿½e+ï¿½ï¿½"yï¿½9ï¿½ï¿½9/ï¿½ï¿½ï¿½ ï¿½/ï¿½ï¿½iï¿½ï¿½ï¿½#9aj9ï¿½ ï¿½fï¿½ï¿½bï¿½z.â¹®ï¿½`#ï¿½ï¿½ï¿½`eN	xï¿½#{ï¿½#9ï¿½#ï¿½ï¿½'yï¿½+ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½aï¿½L:/&ï¿½ï¿½ï¿½:.ï¿½ï¿½#9ï¿½"HN:/&ï¿½ï¿½+ï¿½fï¿½ï¿½bï¿½z.ï¿½ï¿½ ï¿½ï¿½ï¿½`#ï¿½ï¿½ï¿½-ï¿½ï¿½jï¿½9.ï¿½ï¿½(j9n ï¿½h-:-ï¿½ï¿½ï¿½$9ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½ï¿½nï¿½ï¿½iï¿½gï¿½ï¿½ï¿½bï¿½ï¿½gï¿½ï¿½mï¿½nm:`$9ï¿½.9cï¿½.ï¿½ï¿½`ï¿½ï¿½ï¿½lyï¿½bï¿½ï¿½gï¿½ï¿½#9bfï¿½eï¿½ï¿½iï¿½ï¿½cê¹§"yl$yï¿½n9.ï¿½ï¿½ï¿½*;ï¿½#9oï¿½9/ï¿½ï¿½noï¿½.cï¿½.ï¿½ï¿½ï¿½bï¿½. 9ï¿½+ï¿½ï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½nï¿½ï¿½kf9cï¿½ï¿½c%ï¿½ï¿½[ï¿½ï¿½ï¿½[ï¿½ï¿½[ï¿½ÜH\ï¿½ï¿½ï¿½ï¿½[ï¿½Èï¿½ï¿½Üï¿½ï¿½nï¿½9eaï¿½l!ï¿½ï¿½bï¿½."ï¿½ï¿½cyhï¿½ï¿½ï¿½9eaï¿½dï¿½z,ï¿½ï¿½aï¿½.ï¿½zfcy/cï¿½nï¿½ï¿½kf9ï¿½-9/cyï¿½:`cï¿½ï¿½"ï¿½ï¿½#9ï¿½'ï¿½eï¿½ï¿½`&ï¿½n.9ï¿½ ï¿½ï¿½ï¿½ï¿½`g9ï¿½%ï¿½ï¿½&ï¿½l$yï¿½ï¿½9ï¿½ï¿½z,ï¿½8ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½#9nï¿½ï¿½kf9cï¿½ï¿½c%ï¿½ï¿½#yï¿½+ï¿½ï¿½!ï¿½nï¿½9eaï¿½l!ï¿½`cï¿½i&ï¿½ï¿½9kf:,ï¿½:`#ï¿½`cï¿½bï¿½ï¿½e+ï¿½ï¿½hï¿½ï¿½hï¿½ï¿½ï¿½: %ï¿½ï¿½:`cï¿½ï¿½"ï¿½ï¿½ ï¿½g*9cï¿½ï¿½c%ï¿½ï¿½'ï¿½eï¿½ï¿½ï¿½#9nï¿½9eaï¿½`&ï¿½n.9.#yï¿½ ï¿½."ï¿½ï¿½ï¿½:* ï¿½eï¿½ï¿½ï¿½#9l#y."ï¿½ï¿½.9/ï¿½ï¿½ï¿½ï¿½yeaï¿½ohï¿½ï¿½$9hï¿½ï¿½bï¿½ï¿½ï¿½ ï¿½cï¿½ï¿½c%ï¿½kï¿½9ï¿½$9oï¿½;ï¿½#:* ï¿½eï¿½ï¿½ï¿½cyï¿½ ï¿½aï¿½yï¿½ï¿½9fï¿½caï¿½ï¿½ ï¿½ï¿½ï¿½YÎï¿½l,y`ï¿½ï¿½kï¿½ï¿½(ï¿½ylkï¿½.ï¿½ï¿½i*ï¿½i&ï¿½(fï¿½ï¿½'ï¿½ï¿½&{ï¿½#:)ï¿½yï¿½byï¿½*9kï¿½9ï¿½cyï¿½ ï¿½aï¿½ycï¿½ï¿½,ï¿½ï¿½ï¿½#9g*:`&yï¿½ï¿½yï¿½'ï¿½eï¿½ï¿½,ï¿½ï¿½h-;ï¿½"9/ï¿½ï¿½ï¿½ï¿½yeaï¿½ï¿½"yl,yï¿½ï¿½ï¿½ï¿½"yï¿½'ï¿½ï¿½#ï¿½ï¿½ ï¿½ï¿½Kï¿½ï¿½ï¿½[YNï¿½ï¿½QÐï¿½[ï¿½ï¿½ï¿½[ï¿½ï¿½[]Yï¿½]Hï¿½\ï¿½\ï¿½ï¿½[ï¿½ï¿½\ï¿½Üï¿½ï¿½ï¿½Üï¿½ï¿½fï¿½ï¿½bï¿½z.ï¿½fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lyï¿½9ï¿½.9oï¿½ï¿½fï¿½ï¿½.ï¿½ï¿½ï¿½#9bï¿½ï¿½ ï¿½yï¿½+ï¿½ï¿½ï¿½ï¿½b-ï¿½iï¿½:`e9ï¿½:fï¿½ï¿½ï¿½`z"!ï¿½/bz`'ï¿½ï¿½#9ï¿½nï¿½kï¿½ï¿½.ï¿½/&ï¿½bï¿½ybï¿½ï¿½(j9ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½QÐ;ï¿½"9ï¿½eyï¿½ï¿½ï¿½ï¿½ï¿½zfï¿½yï¿½mzfï¿½ï¿½ï¿½mï¿½jï¿½;ï¿½"yï¿½+ï¿½fï¿½ï¿½bï¿½z.ï¿½jaybï¿½yï¿½ï¿½ï¿½ï¿½ly.+yï¿½ :eï¿½:cmyï¿½9bï¿½ï¿½ï¿½ï¿½cbï¿½l#ï¿½jï¿½9a`ï¿½.ï¿½ï¿½ï¿½#:,ï¿½:,ï¿½9ï¿½ï¿½ï¿½b-ï¿½fï¿½ï¿½ï¿½`zeï¿½ï¿½eï¿½;ï¿½#:+ï¿½ï¿½fï¿½ï¿½ï¿½h:fï¿½ï¿½bï¿½ï¿½jï¿½9ï¿½b:/byï¿½ï¿½ï¿½à®ºiï¿½:`e9bï¿½ybï¿½ï¿½ï¿½ ï¿½. :/&ï¿½fï¿½ï¿½bï¿½z.ï¿½`&ï¿½n.:g :)ï¿½yï¿½n9c`yb,9."ï¿½ï¿½oï¿½haï¿½QÐ8ï¿½ ï¿½ï¿½ï¿½YÎï¿½QÐ9l,y`ï¿½ï¿½fï¿½ï¿½bï¿½z.ï¿½ï¿½9ï¿½ï¿½zeï¿½:.#ï¿½ï¿½oï¿½ ï¿½9oï¿½9ï¿½9ì¯¹ká¹£ï¿½ï¿½b-ï¿½fj;ï¿½#9ï¿½nï¿½kï¿½ï¿½)ï¿½yï¿½iï¿½iï¿½:`e9i&ï¿½l$zfï¿½ï¿½ï¿½ y/eyï¿½`ï¿½ï¿½iï¿½ï¿½ yiï¿½ï¿½/eyï¿½iï¿½ï¿½ ï¿½ï¿½Bï¿½Bï¿½Bï¿½NÂï¿½Ê8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½dï¿½ï¿½UBï¿½ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d
-ï¿½Â]ï¿½\ï¿½ï¿½[ï¿½^HHï¿½VNÂ]ï¿½\ï¿½ï¿½[ï¿½ï¿½[\ï¿½H	ï¿½[	ï¿½ï¿½ï¿½ï¿½	ï¿½[	ï¿½	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	ï¿½]ï¿½ï¿½	ï¿½[ï¿½\ï¿½ï¿½IÂ]]Z^ï¿½ï¿½]HHï¿½\Îï¿½Kï¿½\ï¿½ï¿½ï¿½ï¿½ÜNï¿½NÂï¿½Ê8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½dï¿½UHSTï¿½Â¸ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d
-ï¿½Âï¿½Ûï¿½ï¿½Hï¿½ï¿½ï¿½'ï¿½ï¿½'ï¿½ï¿½ï¿½Iï¿½	ï¿½ï¿½'ï¿½ï¿½'ï¿½. 	ï¿½	ï¿½ï¿½'ï¿½ï¿½'ï¿½.ï¿½	ï¿½	ï¿½ï¿½'ï¿½ï¿½'ï¿½."Iï¿½	ï¿½ï¿½'ï¿½ï¿½'ï¿½fï¿½ï¿½ï¿½	ï¿½ï¿½'ï¿½ï¿½'ï¿½.ï¿½	ï¿½	ï¿½ï¿½'ï¿½ï¿½'ï¿½akIï¿½NÂï¿½[ï¿½ï¿½[Û
-ï¿½^ï¿½ï¿½Ûï¿½ï¿½KKO\Ëï¿½]
-	ï¿½Iï¿½Kï¿½X\
-ï¿½[Xï¿½\ï¿½Nï¿½ï¿½]\ï¿½ï¿½ï¿½]ï¿½]JKKLK
-Nï¿½Bï¿½ï¿½[ï¿½ï¿½[Ûï¿½]ï¿½Ü
-ï¿½^ï¿½ï¿½Ûï¿½\
-ï¿½Nï¿½ï¿½]\ï¿½ï¿½	ï¿½ï¿½ï¿½][Û
-
-Jï¿½_Kï¿½ï¿½ï¿½ï¿½]]J
-_Xï¿½Bï¿½ï¿½Ê8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½dï¿½ï¿½Sï¿½Tï¿½VBï¿½ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½[ï¿½\ï¿½^Jï¿½^K[ï¿½[O]ï¿½YJ^Âï¿½\ï¿½ï¿½[ï¿½^HHï¿½^NÂï¿½Ûï¿½HUVï¿½ï¿½^WNÂï¿½Ûï¿½YHVTË[ï¿½^Ùï¿½^JNÂï¿½Ûï¿½]HH
-ï¿½^JNÂï¿½Ûï¿½\ï¿½ï¿½^HHï¿½^HOOHï¿½VNÂï¿½ï¿½ï¿½\]Hï¿½]ï¿½Yï¿½]ÜRBï¿½ï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	Û]ï¿½Y^Iï¿½Kï¿½^ï¿½Û[ï¿½H]Kï¿½ï¿½]]J
-NÂï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	Û]ï¿½]ï¿½	ï¿½Kï¿½^ï¿½Û[ï¿½Hï¿½ï¿½]Kï¿½ï¿½]^J
-WNÂï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	Û]ï¿½^[Iï¿½Kï¿½^ï¿½Û[ï¿½H	ï¿½]Kï¿½ï¿½]ï¿½[YX\ï¿½
-_ynm	ï¿½]Kï¿½ï¿½][Û
-
-Jï¿½_yï¿½"Âï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½ï¿½^K\[	ï¿½Kï¿½ï¿½[Kï¿½\ï¿½^HH\ï¿½ï¿½^Hï¿½	ï¿½[ï¿½[ï¿½KXï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	ÛÛIï¿½Âï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	Øï¿½\ï¿½]ï¿½ï¿½Kï¿½\ï¿½Xï¿½YHYOOHÂï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	Øï¿½[ï¿½^	ï¿½Kï¿½\ï¿½Xï¿½YHYOOHVTË[ï¿½ï¿½LNÂï¿½ï¿½ï¿½]Z^ï¿½ï¿½Pï¿½8ï¿½%ÛHï¿½ï¿½ï¿½Yï¿½Hï¿½]ï¿½[ï¿½\ï¿½^H^\ï¿½Âï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½]Z^ï¿½Yï¿½Xï¿½ï¿½Kï¿½ï¿½[Kï¿½\ï¿½^HH
-Yï¿½
-Hï¿½	Ù^	ï¿½ï¿½	ÛÛIï¿½Âï¿½ï¿½ï¿½ï¿½[ï¿½\ï¿½\ï¿½Xï¿½Hï¿½]ï¿½[Û[ï¿½YHï¿½[ï¿½ï¿½][Ûï¿½ï¿½Ûï¿½Ü\Hï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½\ï¿½Xï¿½K]Ü\	ï¿½NÂï¿½Ûï¿½Ô[ï¿½\ï¿½H
-
-HOï¿½ÂÜ\ï¿½[ï¿½ï¿½\ï¿½SHï¿½Z[S
-ï¿½^JNÂï¿½]\ï¿½]ï¿½X[
-
-NÂYï¿½
-[ï¿½[JHï¿½Ü\ï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½ï¿½[[ÝJ	ÙY[ï¿½ï¿½ï¿½Nï¿½Bï¿½NÂYï¿½
-[ï¿½[J^ÂÜ\ï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½Y
-	ÙY[ï¿½ï¿½ï¿½NÂï¿½][Y[ï¿½]
-Ô[ï¿½\ï¿½ï¿½
-NÂH[ï¿½HÂÔ[ï¿½\ï¿½
-NÂBï¿½Bï¿½ï¿½Ê8ï¿½ 8ï¿½ 8ï¿½ ï¿½RSTï¿½Pï¿½HS8ï¿½ 8ï¿½ 8ï¿½ 
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½Z[S
-ï¿½^J^Âï¿½Ûï¿½Yï¿½ï¿½SHï¿½Yï¿½ËX\
-Oï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½Yï¿½	ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½[ï¿½ï¿½
-Kï¿½ï¿½ï¿½[ï¿½	ï¿½ï¿½NÂï¿½Ûï¿½ï¿½SHï¿½ï¿½^\ï¿½[ï¿½ËX\
-
-ï¿½JOOï¿½ï¿½Hï¿½\ï¿½ï¿½Hï¿½ï¿½Z][Hï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½[ï¿½[Hï¿½ï¿½ï¿½Jï¿½_Oï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½Oï¿½
-Kï¿½ï¿½ï¿½[ï¿½	ï¿½ï¿½NÂï¿½Ûï¿½\ï¿½\ï¿½SHï¿½\ï¿½\ËX\
-Oï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½KXï¿½\ï¿½ï¿½Ûï¿½Xï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½U\ï¿½J\ï¿½Hï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½K[ï¿½[YHï¿½ï¿½ï¿½ï¿½ï¿½[Y_Oï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½KY[ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½Oï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½K\ï¿½Üï¿½ï¿½ï¿½ï¿½ï¿½ÜOï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½KYï¿½[ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½KYï¿½[]ï¿½ï¿½ï¿½ï¿½ï¿½[Oï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½KYYÈï¿½'ï¿½H	ï¿½ï¿½Yï¿½Oï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½KZ[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:nç¹¤ï¿½lezeï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½
-Kï¿½ï¿½ï¿½[ï¿½	ï¿½ï¿½NÂï¿½ï¿½ï¿½\ï¿½ï¿½]ï¿½Hï¿½\ï¿½ï¿½8ï¿½%[Yï¿½]Yï¿½ï¿½\ï¿½Yï¿½[ï¿½ï¿½[Ûï¿½ï¿½ï¿½[\ï¿½ï¿½[ï¿½\]H[H[ï¿½\[ï¿½[ï¿½Bï¿½ï¿½Ûï¿½\ï¿½ï¿½]ï¿½RSHï¿½Z[\ï¿½ï¿½]ï¿½Pï¿½\ï¿½ï¿½ï¿½^JNÂï¿½ï¿½]\ï¿½ï¿½ï¿½\ï¿½Xï¿½Hï¿½\ï¿½ï¿½Hï¿½ï¿½]ï¿½X[ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½Xï¿½KZï¿½Xï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½Xï¿½ï¿½\ï¿½]ï¿½ï¿½.â¹¥ï¿½yì¯º`nï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½Xï¿½ï¿½\ï¿½[[ï¿½Hï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½Xï¿½KZXY[ï¿½Hï¿½ï¿½ï¿½ï¿½XY[ï¿½_Oï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½Xï¿½KYXï¿½Èï¿½ï¿½ï¿½Xï¿½ï¿½Oï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½Xï¿½K[Y]Hï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½;ï¿½&ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½_Oï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½Y]K\ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½Ù]ï¿½Ü
-ï¿½^J_Oï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½Y]K\ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½H:eï¿½z+ï¿½9ï¿½!	ï¿½ï¿½ï¿½XY[ï¿½ï¿½[Y_H9b!ï¿½d&ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½Yï¿½[\ï¿½ï¿½ï¿½ï¿½Yï¿½ï¿½SOï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½Xï¿½[ÛXï¿½ï¿½ï¿½Èï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½[Xï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½9ï¿½f:)ï¿½Oï¿½]ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½[[X\ï¿½K]^ï¿½ï¿½ï¿½ï¿½ï¿½[[X\ï¿½_Oï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½Xï¿½[ÛXï¿½ï¿½ï¿½Èï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½[Xï¿½[ï¿½ï¿½."yi)ï¿½aï¿½znï¿½ï¿½]ï¿½ï¿½ï¿½[ï¿½\ï¿½ï¿½Hï¿½ï¿½[\ï¿½ï¿½ï¿½ï¿½ï¿½SOï¿½[ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½\ï¿½Xï¿½Oï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½K\ï¿½Xï¿½ï¿½]ï¿½X[ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½KZï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½K[ï¿½ï¿½ï¿½'ï¿½ï¿½9.â¹¥ï¿½yd#z*gï¿½)ï¿½ï¿½aï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½K\ï¿½[Hï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½KZ[ï¿½ï¿½ï¿½nï¿½chyï¿½aï¿½ï¿½ï¿½yï¿½"ï¿½*ï¿½ï¿½ï¿½#ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½KYÜYï¿½ï¿½ï¿½\ï¿½\ï¿½SOï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½Üï¿½ï¿½]ï¿½X[ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½Üï¿½[[ï¿½Hï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½Üï¿½\ï¿½[Hï¿½ï¿½ï¿½)ï¿½8ï¿½)ï¿½8ï¿½)ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½Üï¿½[[ï¿½Hï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½K\ï¿½Xï¿½ï¿½]ï¿½X[ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½KZï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½K]]Hï¿½ï¿½oï¿½9ï¿½'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½K\ï¿½[Hï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½K[\ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½]ï¿½RSOï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ÂBï¿½ï¿½Ê8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½dï¿½Tï¿½ï¿½Uï¿½Hï¿½STï¿½ï¿½ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d
-ï¿½Âï¿½Êï¿½ï¿½Z[\ï¿½ï¿½]ï¿½Hï¿½\ï¿½Sï¿½\ï¿½Xï¿½[ï¿½ï¿½ï¿½\ï¿½ï¿½[ï¿½ï¿½[\ï¿½	ï¿½^ï¿½Y[ï¿½ï¿½^ï¿½\ï¿½^H
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½Z[\ï¿½ï¿½]ï¿½Pï¿½\ï¿½ï¿½^ï¿½\ï¿½^J^Âï¿½Ûï¿½ï¿½[\ï¿½YHËï¿½ï¿½VTï¿½Kï¿½ï¿½]ï¿½\ï¿½ï¿½J
-Bï¿½ï¿½ï¿½[\ï¿½ï¿½Oï¿½ï¿½OOH^ï¿½\ï¿½^JBï¿½ï¿½ï¿½[\ï¿½ï¿½Oï¿½ï¿½\ï¿½ï¿½[ï¿½ï¿½[\ï¿½OOH	ï¿½[	ï¿½UVï¿½ï¿½Kï¿½Yï¿½Ëï¿½ï¿½YJOï¿½ï¿½OOHï¿½\ï¿½ï¿½[ï¿½ï¿½[\ï¿½JNÂï¿½Yï¿½
-Yï¿½[\ï¿½Yï¿½[ï¿½ï¿½
-^Âï¿½Ûï¿½Xï¿½[ï¿½Hï¿½ï¿½ï¿½ï¿½Îï¿½`"ï¿½ ï¿½Iï¿½]ï¿½ï¿½ï¿½Uï¿½ï¿½[ï¿½\ï¿½ï¿½Nï¿½ï¿½ï¿½(ï¿½ï¿½kIï¿½NÂï¿½]\ï¿½ï¿½]ï¿½ï¿½[OHï¿½Y[ï¿½ÎÌï¿½ï¿½ï¿½Üï¿½ï¿½\ï¿½KZ[ï¿½ï¿½Yï¿½Z[ï¿½
-Nï¿½ï¿½Û\ï¿½^ï¿½Nï¿½ï¿½\ï¿½KYï¿½Xï¿½ï¿½JNï¿½^X[YÛï¿½ï¿½[ï¿½\ï¿½Èï¿½ï¿½9ï¿½ï¿½bcykf9ï¿½ï¿½9.+z`ï¿½9ï¿½ï¿½ï¿½ï¿½"xï¿½#	ï¿½Xï¿½[ï¿½ï¿½ï¿½\ï¿½ï¿½[ï¿½ï¿½[\ï¿½_xï¿½#zhgï¿½b)yï¿½9ï¿½ï¿½ï¿½ï¿½ï¿½8ï¿½ ï¿½ï¿½ï¿½]ï¿½ï¿½ÂBï¿½ï¿½ï¿½]\ï¿½ï¿½ï¿½[\ï¿½Yï¿½X\
-ï¿½Oï¿½Âï¿½Ûï¿½HHUVï¿½ï¿½NÂï¿½Ûï¿½Yï¿½Ôï¿½ï¿½HKï¿½Yï¿½Ëï¿½Xï¿½Jï¿½Kï¿½X\
-Oï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½Yï¿½	ï¿½ï¿½Hï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½[ï¿½ï¿½
-Kï¿½ï¿½ï¿½[ï¿½	ï¿½ï¿½NÂï¿½]\ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½KXï¿½\ï¿½ï¿½Ûï¿½Xï¿½ï¿½Hï¿½ï¿½]ï¿½Yï¿½]Wï¿½ï¿½	ï¿½ï¿½ï¿½Iï¿½Hï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½KXï¿½\ï¿½]Yï¿½Èï¿½ï¿½Yï¿½Ôï¿½ï¿½Oï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½KXï¿½\ï¿½Zï¿½ï¿½ï¿½Kï¿½XY[ï¿½_Oï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½KXï¿½\ï¿½YXï¿½Èï¿½ï¿½Kï¿½Xï¿½ï¿½Oï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½KXï¿½\ï¿½[Y]Hï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½\ï¿½ï¿½]ï¿½KXï¿½\ï¿½Y]Hï¿½ï¿½Ù]ï¿½Ü
-ï¿½_Oï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½\ï¿½ï¿½Hï¿½Yï¿½ï¿½	ï¿½Kï¿½Yï¿½ï¿½Xï¿½[_Hï¿½ï¿½ï¿½Kï¿½Yï¿½ï¿½Xï¿½[SXï¿½[Oï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ÂJKï¿½ï¿½ï¿½[ï¿½	ï¿½ï¿½NÂBï¿½ï¿½Êï¿½\]HÛHH\ï¿½ï¿½]ï¿½H\ï¿½[ï¿½Hï¿½Hï¿½]ï¿½]ï¿½K\ï¿½[ï¿½\ï¿½[ï¿½ï¿½Hï¿½[\ï¿½Xï¿½H
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½[ï¿½\ï¿½\ï¿½ï¿½]ï¿½J
-^Âï¿½Ûï¿½[Hï¿½ï¿½[Y[ï¿½ï¿½]Y\ï¿½Tï¿½[Xï¿½Ü	Ë\ï¿½ï¿½]ï¿½K[\ï¿½	ï¿½NÂYï¿½
-[
-H[ï¿½[ï¿½ï¿½\ï¿½SHï¿½Z[\ï¿½ï¿½]ï¿½Pï¿½\ï¿½ï¿½ï¿½\ï¿½ï¿½[ï¿½^JNÂBï¿½ï¿½Êï¿½ï¿½ï¿½]ï¿½Xï¿½]ï¿½Hï¿½[\ï¿½ï¿½\[ï¿½ï¿½Yï¿½ï¿½\ï¿½\ï¿½ï¿½]ï¿½H
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½]ï¿½[\ï¿½ï¿½^Âï¿½\ï¿½ï¿½[ï¿½ï¿½[\ï¿½Hï¿½Âï¿½ï¿½\]Hï¿½\Xï¿½]ï¿½Hï¿½]Bï¿½ï¿½ï¿½[	ï¿½	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	ï¿½]ï¿½ï¿½	ï¿½[ï¿½\ï¿½ï¿½Iï¿½Kï¿½ï¿½ÜXXï¿½
-YOï¿½Âï¿½Ûï¿½ï¿½\Hï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½ï¿½\Iï¿½
-ï¿½Y
-NÂYï¿½
-ï¿½\
-Hï¿½\ï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½J	ï¿½ï¿½\XXï¿½]ï¿½Iï¿½YOOHï¿½NÂJNÂï¿½[ï¿½\ï¿½\ï¿½ï¿½]ï¿½J
-NÂBï¿½ï¿½Ê8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½dï¿½ï¿½Uï¿½Qï¿½USÓï¿½ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½]ï¿½Yï¿½]J\ï¿½^Âï¿½Ûï¿½HHVTË[ï¿½^Ùï¿½\ï¿½ï¿½[ï¿½^JH
-ï¿½\ï¿½ÂYï¿½
-Hï¿½H	ï¿½ï¿½HVTË[ï¿½ï¿½
-^Âï¿½[ï¿½\ï¿½^JVTï¿½ï¿½WJNÂï¿½[ï¿½ï¿½Ëï¿½Üï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Z]ï¿½[Üï¿½ï¿½ï¿½[ï¿½ï¿½	ï¿½JNÂBï¿½Bï¿½ï¿½[ï¿½ï¿½[Ûï¿½]ï¿½Yï¿½]Wï¿½ï¿½ï¿½^J^Âï¿½[ï¿½\ï¿½^Jï¿½^JNÂï¿½[ï¿½ï¿½Ëï¿½Üï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Z]ï¿½[Üï¿½ï¿½ï¿½[ï¿½ï¿½	ï¿½JNÂBï¿½ï¿½Ê8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½dï¿½Tï¿½Hï¿½Tï¿½Â¸ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½ï¿½ï¿½U\ï¿½J[
-^Âï¿½Ûï¿½ï¿½\ï¿½H[ï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½ï¿½ÛZ[ï¿½ï¿½	ï¿½ï¿½[ï¿½ï¿½NÂï¿½ï¿½[Y[ï¿½ï¿½]Y\ï¿½Tï¿½[Xï¿½Ü[
-	Ë\ï¿½KXï¿½\ï¿½	ï¿½Kï¿½ï¿½ÜXXï¿½
-ï¿½Oï¿½Ëï¿½\ï¿½ï¿½\ï¿½ï¿½ï¿½[[ÝJ	ï¿½ï¿½[ï¿½ï¿½JNÂYï¿½
-]ï¿½\ï¿½H[ï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½Y
-	ï¿½ï¿½[ï¿½ï¿½NÂBï¿½ï¿½Ê8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½dï¿½URVï¿½ï¿½ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d8ï¿½d
-ï¿½Âï¿½[ï¿½ï¿½[Ûï¿½[ï¿½]Z^ï¿½
-^Âï¿½Ûï¿½YHVTË[ï¿½^Ùï¿½\ï¿½ï¿½[ï¿½^JNÂYï¿½
-YJHï¿½]\ï¿½ï¿½Âï¿½Ûï¿½ï¿½]ï¿½ï¿½^HHVTï¿½ï¿½YLWNÂï¿½Ûï¿½\ï¿½\ï¿½HUVï¿½ï¿½]ï¿½ï¿½^WKï¿½\ï¿½\ï¿½Âï¿½Ûï¿½[ï¿½[Y\ï¿½HØï¿½Xï¿½ï¿½ï¿½[Y\ï¿½UJKï¿½ï¿½]X\
-Oï¿½ï¿½\ï¿½\ËX\
-Oï¿½ï¿½ï¿½[YJJNÂï¿½ï¿½ï¿½Xï¿½ï¿½\ï¿½ï¿½ï¿½[ï¿½ï¿½H\ï¿½\Âï¿½Ûï¿½ï¿½[Xï¿½YHï¿½Yï¿½ï¿½JËï¿½ï¿½\ï¿½\ï¿½JKï¿½ï¿½Xï¿½Jï¿½NÂ]Z^ï¿½ï¿½]Kï¿½\ï¿½Hï¿½[Xï¿½Yï¿½X\
-\ï¿½OOï¿½Âï¿½Ûï¿½ÜÛï¿½Hï¿½Yï¿½ï¿½J[ï¿½[Y\Ëï¿½[\ï¿½ï¿½Oï¿½ï¿½OO]\ï¿½Kï¿½ï¿½[YJJKï¿½ï¿½Xï¿½Jï¿½NÂï¿½Ûï¿½ï¿½[Ûï¿½Hï¿½Yï¿½ï¿½Jï¿½\ï¿½Kï¿½ï¿½[YKï¿½ï¿½ï¿½ÜÛï¿½JNÂï¿½]\ï¿½ï¿½ï¿½\ï¿½Kï¿½[Ûï¿½[ï¿½ï¿½ï¿½\ï¿½Yï¿½ï¿½[ï¿½HNÂJNÂ]Z^ï¿½ï¿½]Kï¿½ï¿½\ï¿½HÂ]Z^ï¿½ï¿½]Kï¿½ï¿½ï¿½ÜHHÂï¿½ï¿½ï¿½ï¿½]Y\ï¿½[Û
-NÂï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½[ï¿½[[Ý\ï¿½^Iï¿½Kï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½Y
-	ï¿½ï¿½[ï¿½ï¿½NÂBï¿½ï¿½[ï¿½ï¿½[Ûï¿½ï¿½ï¿½T]Z^ï¿½
-^ï¿½ï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½[ï¿½[[Ý\ï¿½^Iï¿½Kï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½ï¿½[[ÝJ	ï¿½ï¿½[ï¿½ï¿½Nï¿½Bï¿½ï¿½[ï¿½ï¿½[ÛÝ\ï¿½^Pï¿½Xï¿½ï¿½J^ï¿½Yï¿½Kï¿½\ï¿½ï¿½]OOYï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½[ï¿½[[Ý\ï¿½^Iï¿½JHï¿½ï¿½ï¿½T]Z^ï¿½
-Nï¿½Bï¿½ï¿½ï¿½[ï¿½ï¿½[Ûï¿½ï¿½ï¿½]Y\ï¿½[Û
-^Âï¿½Ûï¿½ï¿½\ï¿½ï¿½\ï¿½HH]Z^ï¿½ï¿½]NÂYï¿½
-ï¿½\ï¿½ï¿½H\Ë[ï¿½ï¿½
-^ï¿½ï¿½ï¿½Ô\ï¿½[
-
-Nï¿½ï¿½]\ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Ûï¿½HH\ï¿½ï¿½ï¿½\ï¿½NÂï¿½Ûï¿½ï¿½HX]ï¿½ï¿½ï¿½[ï¿½
-ï¿½\ï¿½ï¿½\Ë[ï¿½ï¿½
-ï¿½L
-NÂï¿½Ûï¿½ï¿½]ï¿½]HHï¿½]ï¿½Ü
-VTï¿½ï¿½VTË[ï¿½^Ùï¿½\ï¿½ï¿½[ï¿½^JKLWJNÂï¿½ï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½[ï¿½[Xï¿½ï¿½Iï¿½Kï¿½[ï¿½ï¿½\ï¿½SHï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½[ï¿½[Zï¿½Xï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½*9ï¿½ï¿½{ï¿½"	ï¿½ï¿½]ï¿½]_{ï¿½"yd#z*gï¿½ï¿½+:jeï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½[ï¿½[]]Hï¿½ï¿½/h:`ï¿½:*&9oï¿½ï¿½eï¿½ï¿½'ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½[ï¿½[\ï¿½Xï¿½ï¿½ï¿½ï¿½.yï¿½ï¿½.ï¿½y."ï¿½ï¿½oz*lyï¿½ï¿½ï¿½/ï¿½;ï¿½#9ï¿½'9ï¿½':`&yï¿½+ï¿½dï¿½`"ï¿½ï¿½ï¿½z,ï¿½ï¿½d#z*gï¿½ï¿½'ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½\ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½+	ï¿½ï¿½\ï¿½ï¿½_H:hc;ï¿½#9alH	ï¿½\Ë[ï¿½ï¿½H:hcï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½\ï¿½ï¿½ï¿½Xï¿½\ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½\ï¿½ï¿½ï¿½Yï¿½[ï¿½ï¿½[OHï¿½ï¿½Yï¿½ï¿½ï¿½IHï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½\K[ï¿½[Hï¿½ï¿½]Y\ï¿½[Û	ï¿½ï¿½\ï¿½ï¿½_Oï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½\K]ï¿½ï¿½`&y`"ï¿½ï¿½oz*lyï¿½ï¿½9eï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½9ï¿½9ï¿½+ï¿½dï¿½`"ï¿½d#z*gï¿½ï¿½'ï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½YYï¿½Xï¿½ï¿½ï¿½ï¿½'ï¿½H	ï¿½Kï¿½\ï¿½Kï¿½Yï¿½Oï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½[ï¿½Èï¿½ï¿½	ï¿½Kï¿½ï¿½[ÛËX\
-ï¿½Oï¿½ï¿½]Ûï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½[ï¿½ï¿½Ûï¿½Xï¿½ï¿½Hï¿½[ï¿½ï¿½ï¿½\ï¿½\ï¿½	ï¿½ï¿½ï¿½ï¿½ï¿½\Xï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½	È_Iï¿½	ï¿½ï¿½Kï¿½\ï¿½Kï¿½ï¿½[YKï¿½ï¿½\Xï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½	È_Iï¿½Hï¿½ï¿½ï¿½	ï¿½ï¿½Bï¿½Ø]Ûï¿½
-Kï¿½ï¿½ï¿½[ï¿½	ï¿½ï¿½_Bï¿½ï¿½]ï¿½ï¿½ï¿½]ï¿½ï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½Yï¿½ï¿½ï¿½YHï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½]Ûï¿½\ï¿½ï¿½Hï¿½]Z^ï¿½[ï¿½^ï¿½YHï¿½[ï¿½ï¿½Ûï¿½Xï¿½ï¿½Hï¿½ï¿½^J
-Hï¿½ï¿½ï¿½	ï¿½ï¿½\ï¿½ï¿½H\Ë[ï¿½ï¿½ï¿½	ï¿½."ï¿½. :ac8ï¿½ï¿½ï¿½ï¿½ï¿½	ï¿½ï¿½ï¿½yï¿½"ï¿½ï¿½d9ï¿½ï¿½8ï¿½ï¿½ï¿½ï¿½Bï¿½Ø]Ûï¿½ÂBï¿½ï¿½ï¿½[ï¿½ï¿½[Û[ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½[Xï¿½Yï¿½Üï¿½Xï¿½
-^ÂYï¿½
-]Z^ï¿½ï¿½]Kï¿½\ï¿½ï¿½]Z^ï¿½ï¿½]Kï¿½ï¿½\ï¿½Kï¿½[ï¿½ï¿½ï¿½\ï¿½Y
-Hï¿½]\ï¿½ï¿½Â]Z^ï¿½ï¿½]Kï¿½\ï¿½ï¿½]Z^ï¿½ï¿½]Kï¿½ï¿½\ï¿½Kï¿½[ï¿½ï¿½ï¿½\ï¿½YHï¿½YNÂï¿½Ûï¿½ï¿½ï¿½Hï¿½[Xï¿½YOOHï¿½Üï¿½Xï¿½ÂYï¿½
-ï¿½ï¿½H]Z^ï¿½ï¿½]Kï¿½ï¿½ï¿½ÜJï¿½ï¿½Âï¿½ï¿½ï¿½[Y[ï¿½ï¿½]Y\ï¿½Tï¿½[Xï¿½Ü[
-	Ë]Z^ï¿½[ï¿½	ï¿½Kï¿½ï¿½ÜXXï¿½
-ï¿½Oï¿½Âï¿½ï¿½\ï¿½Xï¿½YHï¿½YNÂYï¿½
-ï¿½ï¿½^ï¿½Û[ï¿½ï¿½ï¿½[J
-HOOHï¿½Üï¿½Xï¿½
-Hï¿½ï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½Y
-	ï¿½ï¿½Üï¿½Xï¿½	ï¿½NÂ[ï¿½HYï¿½
-ï¿½OOHï¿½ï¿½	ï¿½ï¿½[ï¿½ï¿½Hï¿½ï¿½ï¿½\ï¿½ï¿½\ï¿½ï¿½Y
-	ï¿½ÜÛï¿½ï¿½NÂJNÂï¿½ï¿½Ûï¿½\ï¿½HH]Z^ï¿½ï¿½]Kï¿½\ï¿½ï¿½]Z^ï¿½ï¿½]Kï¿½ï¿½\ï¿½Kï¿½\ï¿½NÂï¿½Ûï¿½ï¿½ï¿½Hï¿½ï¿½[Y[ï¿½ï¿½ï¿½][[Y[ï¿½ï¿½RY
-	ï¿½Yï¿½ï¿½ï¿½NÂYï¿½
-ï¿½ï¿½^Âï¿½ï¿½ï¿½ï¿½\ï¿½Ó[YHH	ï¿½]Z^ï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  fb.innerHTML = `â ç­å°äºï¼<br><strong>${term.name}</strong>ï¼${term.short}`;
-  } else {
-    fb.className = 'quiz-fb show fail';
-    fb.innerHTML = `â ç­é¯äºï¼æ­£ç¢ºç­æ¡æ¯ <strong>${correct}</strong>ã<br>${term.short}`;
-  }
-  document.getElementById('qnxt').classList.add('show');
-}
-
-function nextQ(){ quizState.cur++; showQuestion(); }
-
-function showResult(){
-  const { score, qs } = quizState;
-  const total = qs.length;
-  const pct   = Math.round(score/total*100);
-  const [emoji,msg] =
-    pct===100 ? ['ð','å®ç¾ï¼ä¸é¡å¨å°ï¼ä½ å·²å®å¨ææ¡éäºåè©äº ð'] :
-    pct>=67   ? ['ð','ç­å¾ä¸é¯ï¼åè¤ç¿ä¸ä¸ç­é¯çåè©ï¼æå¤©ç¹¼çºææ°ã'] :
-                ['ð','éæé²æ­¥ç©ºéï¼å»ºè­°åå»ç¿»é±æ¨æ¥çåè©è§£éå¡ï¼å æ·±å°è±¡ã'];
-
-  document.getElementById('modal-body').innerHTML = `
-    <div class="modal-kicker">æ¸¬é©çµæ</div>
-    <div class="modal-title">å®æï¼</div>
-    <div class="quiz-result">
-      <div class="quiz-emoji">${emoji}</div>
-      <div class="quiz-score">${score} <span style="font-size:28px;color:var(--ink-faint)">/ ${total}</span></div>
-      <div class="quiz-score-lbl">ç­å°é¡æ¸</div>
-      <div class="quiz-result-msg">${msg}</div>
-      <div class="quiz-result-btns">
-        <button class="btn-outline" onclick="retryQuiz()">åç­ä¸æ¬¡</button>
-        <button class="btn-solid"   onclick="closeQuiz()">éé</button>
-      </div>
-    </div>`;
-}
-
-function retryQuiz(){
-  quizState.cur = 0; quizState.score = 0;
-  quizState.qs.forEach(q=>q.answered=false);
-  showQuestion();
-}
-
-/* âââââââââââââââââââââââââââââââââââââââââââ
-   SCROLL REVEAL
-âââââââââââââââââââââââââââââââââââââââââââ */
-function setupReveal(){
-  const obs = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
-  },{ threshold:0.06 });
-  document.querySelectorAll('.reveal').forEach(el=>{ el.classList.remove('in'); obs.observe(el); });
-}
-
-/* âââââââââââââââââââââââââââââââââââââââââââ
-   UTILS
-âââââââââââââââââââââââââââââââââââââââââââ */
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
-}
-
-/* âââââââââââââââââââââââââââââââââââââââââââ
-   INIT
-âââââââââââââââââââââââââââââââââââââââââââ */
-renderDay(TODAY, false);
-setTimeout(()=>{
-  document.getElementById('day-nav').classList.add('in');
-  setupReveal();
-}, 40);
-</script>
 </body>
 </html>
