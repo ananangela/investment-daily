@@ -4,288 +4,390 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>投資日報 · 每日一則</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=DM+Serif+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --ink:              #1a1a1a;
+      --ink-light:        #4a4a4a;
+      --ink-faint:        #888;
+      --paper:            #faf9f6;
+      --paper-warm:       #f3f0e8;
+      --rule:             #d4cfc4;
+      --accent:           #c8a96e;
+      --accent-dark:      #a07840;
+      --tag-stock-bg:     #e8f0e8;
+      --tag-stock-fg:     #2d6a2d;
+      --tag-etf-bg:       #e8ecf4;
+      --tag-etf-fg:       #1e3a6e;
+      --tag-industry-bg:  #f4ece8;
+      --tag-industry-fg:  #6e2e1e;
+      --highlight:        #fffbe6;
+
+      --f-deco:  13px;
+      --f-meta:  14px;
+      --f-body:  16px;
+      --f-md:    17px;
+      --f-sub:   20px;
+      --f-head:  26px;
+      --f-hero:  34px;
+      --f-date:  52px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #faf9f6;
-      color: #1a1a1a;
+      background: var(--paper);
+      color: var(--ink);
       font-family: 'Noto Sans TC', sans-serif;
       font-weight: 300;
-      font-size: 16px;
+      font-size: var(--f-body);
       line-height: 1.8;
+      min-height: 100vh;
     }
 
-    header {
+    /* ─── MASTHEAD ──────────────────────────── */
+    .masthead {
+      border-bottom: 3px double var(--ink);
+      padding: 36px 0 22px;
       text-align: center;
-      padding: 3rem 2rem;
-      border-bottom: 1px solid #d4cfc4;
+    }
+    .masthead-vol {
+      font-size: var(--f-deco);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 12px;
+    }
+    .masthead-title {
+      font-family: 'DM Serif Display', 'Noto Serif TC', serif;
+      font-size: clamp(42px, 9vw, 72px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .masthead-title em { font-style: normal; color: var(--accent-dark); }
+    .masthead-tagline {
+      font-size: var(--f-meta);
+      letter-spacing: 0.22em;
+      color: var(--ink-light);
+      text-transform: uppercase;
+    }
+    .masthead-orn {
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 48px 0; justify-content: center;
+    }
+    .masthead-orn-line { flex: 1; max-width: 100px; height: 1px; background: var(--rule); }
+    .masthead-orn span { font-size: var(--f-deco); color: var(--accent); letter-spacing: 0.4em; }
+
+    /* ─── NAV STRIP ─────────────────────────── */
+    .nav-strip {
+      border-bottom: 1px solid var(--rule);
+      padding: 12px 0;
+      background: var(--paper);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .nav-inner {
+      display: flex; gap: 8px; align-items: center;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-label {
+      font-size: var(--f-deco);
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink-faint); white-space: nowrap; flex-shrink: 0;
+    }
+    .nav-chip {
+      padding: 5px 16px; border-radius: 20px;
+      font-size: var(--f-meta); white-space: nowrap;
+      cursor: pointer; border: 1px solid transparent;
+      transition: all 0.2s; text-decoration: none; font-weight: 400;
+      background: none; font-family: inherit;
+    }
+    .nav-chip.all      { background: var(--ink); color: var(--paper); }
+    .nav-chip.stock    { background: var(--tag-stock-bg); color: var(--tag-stock-fg); border-color: #b8d4b8; }
+    .nav-chip.etf      { background: var(--tag-etf-bg);   color: var(--tag-etf-fg);   border-color: #b8c4d8; }
+    .nav-chip.industry { background: var(--tag-industry-bg); color: var(--tag-industry-fg); border-color: #d4b8ac; }
+    .nav-chip:hover { filter: brightness(0.94); }
+    .nav-chip.chip-active { box-shadow: 0 0 0 2px var(--ink); font-weight: 500; }
+    .nav-chip.all.chip-active { box-shadow: 0 0 0 2px #555; }
+
+    /* ─── DAY NAVIGATOR ─────────────────────── */
+    .day-nav {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+      padding: 36px 0 26px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 40px;
+    }
+    .day-nav-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 18px;
+      border: 1px solid var(--rule); background: white;
+      cursor: pointer; font-size: var(--f-meta);
+      color: var(--ink-light); font-family: inherit;
+      letter-spacing: 0.06em; transition: all 0.18s;
+      border-radius: 2px; white-space: nowrap;
+    }
+    .day-nav-btn:hover:not(:disabled) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .day-nav-btn:disabled { opacity: 0.3; cursor: default; }
+    .day-nav-center { text-align: center; }
+    .day-nav-big {
+      font-family: 'DM Serif Display', serif;
+      font-size: var(--f-date); line-height: 1; font-weight: 400;
+    }
+    .day-nav-weekday {
+      font-family: 'Noto Serif TC', serif;
+      font-size: var(--f-sub); font-weight: 500; color: var(--ink);
+    }
+    .day-nav-month { font-size: var(--f-meta); color: var(--ink-faint); letter-spacing: 0.08em; margin-top: 4px; }
+    .today-pill {
+      display: inline-block;
+      background: var(--accent); color: white;
+      font-size: var(--f-deco); letter-spacing: 0.12em;
+      padding: 2px 10px; border-radius: 2px; margin-top: 6px; font-weight: 500;
     }
 
-    h1 { font-size: 3rem; font-weight: 700; margin: 1rem 0; }
-    h1 em { color: #c8a96e; font-style: normal; }
-
-    .tagline { font-size: 0.95rem; color: #4a4a4a; margin: 0.5rem 0; letter-spacing: 0.05em; }
-
-    .date-nav {
-      background: #f3f0e8;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2rem;
-      border-bottom: 1px solid #d4cfc4;
-    }
-
-    .nav-btn {
-      padding: 0.5rem 1rem;
-      border: 1px solid #d4cfc4;
-      background: white;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: all 0.2s;
-    }
-
-    .nav-btn:hover { background: #c8a96e; color: white; }
-    .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .date-display {
-      text-align: center;
-      min-width: 150px;
-    }
-
-    .date-big { font-size: 2.5rem; font-weight: 700; }
-    .date-small { font-size: 0.9rem; color: #888; }
-
-    nav {
-      background: white;
-      padding: 1rem;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #d4cfc4;
-    }
-
-    .filter-btn {
-      padding: 0.5rem 1rem;
-      border: 1px solid #d4cfc4;
-      background: white;
-      color: #1a1a1a;
-      cursor: pointer;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-
-    .filter-btn:hover { background: #f3f0e8; }
-    .filter-btn.active { background: #c8a96e; color: white; border-color: #c8a96e; }
-
-    main {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 0 2rem;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    article {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
+    /* ─── ARTICLE AREA ──────────────────────── */
+    #article-wrap { transition: opacity 0.25s ease, transform 0.25s ease; }
+    #article-wrap.fading { opacity: 0; transform: translateY(8px); }
 
     .article-kicker {
-      font-size: 0.85rem;
-      color: #c8a96e;
-      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
     }
+    .kicker-txt {
+      font-size: var(--f-deco); letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--accent-dark); font-weight: 500;
+    }
+    .kicker-line { width: 36px; height: 1px; background: var(--accent); }
 
-    h2 { font-size: 1.8rem; margin: 1rem 0; line-height: 1.4; }
-
-    .deck { font-size: 1.1rem; color: #4a4a4a; margin: 1rem 0; }
-
+    .article-headline {
+      font-family: 'Noto Serif TC', serif;
+      font-size: clamp(22px, 4vw, var(--f-hero));
+      font-weight: 700; line-height: 1.4;
+      margin-bottom: 14px; letter-spacing: -0.01em;
+    }
+    .article-deck {
+      font-size: var(--f-md); color: var(--ink-light); line-height: 1.8; margin-bottom: 18px;
+    }
     .article-meta {
-      font-size: 0.9rem;
-      color: #888;
-      margin: 1rem 0;
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 12px; font-size: var(--f-meta); color: var(--ink-faint); margin-bottom: 22px;
     }
+    .meta-sep { color: var(--rule); }
 
-    .tag-list {
-      display: flex;
-      gap: 0.5rem;
-      margin: 1rem 0;
-      flex-wrap: wrap;
-    }
-
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
     .tag {
-      padding: 0.3rem 0.8rem;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 500;
+      padding: 4px 12px; border-radius: 3px;
+      font-size: var(--f-meta); font-weight: 500; letter-spacing: 0.04em;
     }
+    .tag.stock    { background: var(--tag-stock-bg);    color: var(--tag-stock-fg); }
+    .tag.etf      { background: var(--tag-etf-bg);      color: var(--tag-etf-fg); }
+    .tag.industry { background: var(--tag-industry-bg); color: var(--tag-industry-fg); }
 
-    .tag.stock { background: #e8f0e8; color: #2d6a2d; }
-    .tag.etf { background: #e8ecf4; color: #1e3a6e; }
-    .tag.industry { background: #f4ece8; color: #6e2e1e; }
-
+    /* ─── TWO-COL ────────────────────────────── */
     .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin: 2rem 0;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;
     }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
 
-    @media (max-width: 768px) {
-      .two-col { grid-template-columns: 1fr; }
+    .section-block {
+      background: white; border: 1px solid var(--rule);
+      border-radius: 2px; padding: 24px; position: relative;
     }
-
-    .section-block { padding: 1.5rem; background: #f5f5f5; border-radius: 6px; }
-
+    .section-block::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--ink); border-radius: 2px 2px 0 0;
+    }
     .block-label {
-      font-weight: 600;
-      color: #c8a96e;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
+      font-size: var(--f-deco); letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--ink-faint); margin-bottom: 16px; font-weight: 500;
     }
 
-    .kp-list { list-style: none; padding: 0; }
-
-    .kp-item {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 0.8rem;
-      padding: 0.5rem;
+    .summary-text {
+      font-family: 'Noto Serif TC', serif; font-size: var(--f-body); line-height: 2;
     }
+    .summary-text strong { font-weight: 700; border-bottom: 2px solid var(--accent); }
 
+    .kp-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .kp-item { display: flex; gap: 12px; align-items: flex-start; }
     .kp-num {
-      min-width: 24px;
-      height: 24px;
-      background: #c8a96e;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 600;
-      flex-shrink: 0;
+      flex-shrink: 0; width: 24px; height: 24px;
+      background: var(--ink); color: var(--paper);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: var(--f-meta); font-weight: 500; margin-top: 2px;
     }
+    .kp-txt { font-size: var(--f-body); line-height: 1.8; color: var(--ink-light); }
 
-    .glossary-sec {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
+    /* ─── GLOSSARY ──────────────────────────── */
+    .glossary-sec { margin-bottom: 40px; }
+    .glossary-hd {
+      display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px;
     }
-
-    .glossary-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: #1a1a1a;
+    .glossary-lbl {
+      font-size: var(--f-deco); letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--ink-faint); font-weight: 500; white-space: nowrap;
     }
-
+    .glossary-rule { flex: 1; height: 1px; background: var(--rule); }
+    .glossary-hint { font-size: var(--f-meta); color: var(--ink-faint); white-space: nowrap; }
     .glossary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px;
     }
 
     .term-card {
-      padding: 1rem;
-      background: #f5f5f5;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
+      background: white; border: 1px solid var(--rule);
+      border-radius: 2px; padding: 20px; cursor: pointer;
+      transition: box-shadow 0.22s, transform 0.22s; position: relative; overflow: hidden;
     }
-
-    .term-card:hover {
-      background: #e8ecf4;
-      border-color: #c8a96e;
-      transform: translateY(-2px);
+    .term-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--accent);
+      transform: scaleX(0); transition: transform 0.22s; transform-origin: left;
     }
+    .term-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .term-card:hover::after, .term-card.open::after { transform: scaleX(1); }
+    .term-card.open { background: var(--highlight); border-color: var(--accent); }
 
-    .term-card.open {
-      background: white;
-      border-color: #c8a96e;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    .term-name { font-family: 'Noto Serif TC', serif; font-size: var(--f-sub); font-weight: 700; margin-bottom: 3px; }
+    .term-en { font-family: 'Inter', sans-serif; font-size: var(--f-deco); letter-spacing: 0.1em; color: var(--ink-faint); text-transform: uppercase; margin-bottom: 12px; }
+    .term-short { font-size: var(--f-body); color: var(--ink-light); line-height: 1.7; }
+    .term-card:not(.open) .term-short {
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-
-    .term-name { font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
-    .term-en { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
-    .term-short { font-size: 0.9rem; color: #4a4a4a; }
-
-    .term-full {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #d4cfc4;
-      font-size: 0.9rem;
-      color: #333;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-    }
-
-    .term-card.open .term-full {
-      max-height: 300px;
-    }
-
+    .term-full { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--rule); }
+    .term-card.open .term-full { display: block; }
+    .term-full-txt { font-size: var(--f-body); line-height: 1.85; color: var(--ink); }
     .term-eg {
-      margin-top: 0.5rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid #e0e0e0;
-      font-style: italic;
-      color: #666;
+      margin-top: 10px; padding: 10px 14px;
+      background: var(--paper-warm); border-left: 3px solid var(--accent);
+      font-size: var(--f-body); color: var(--ink-light); font-style: italic; line-height: 1.75;
     }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #888;
-      font-size: 0.9rem;
-      border-top: 1px solid #d4cfc4;
-      margin-top: 3rem;
+    .term-hint {
+      font-size: var(--f-deco); color: var(--accent-dark);
+      margin-top: 10px; text-align: right; letter-spacing: 0.08em;
     }
+    .term-card.open .term-hint { display: none; }
 
-    strong { font-weight: 600; color: #333; }
+    /* ─── DIVIDER ────────────────────────────── */
+    .orn { display: flex; align-items: center; gap: 18px; margin: 40px 0; }
+    .orn-line { flex: 1; height: 1px; background: var(--rule); }
+    .orn-sym { color: var(--accent); font-size: var(--f-meta); letter-spacing: 0.3em; }
+
+    /* ─── ARCHIVE ────────────────────────────── */
+    .archive-sec { margin-bottom: 60px; }
+    .archive-hd { display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px; }
+    .archive-title { font-family: 'Noto Serif TC', serif; font-size: var(--f-sub); font-weight: 700; }
+    .archive-rule { flex: 1; height: 1px; background: var(--rule); }
+
+    .archive-list { display: flex; flex-direction: column; }
+    .archive-card {
+      display: grid; grid-template-columns: 1fr auto; gap: 20px;
+      align-items: start; padding: 22px 0;
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer; transition: background 0.15s, margin 0.15s, padding 0.15s;
+      border-radius: 2px; text-decoration: none; color: inherit;
+    }
+    .archive-card:hover { background: white; margin: 0 -18px; padding: 22px 18px; }
+    .archive-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .archive-card-hl {
+      font-family: 'Noto Serif TC', serif;
+      font-size: var(--f-head); font-weight: 500; line-height: 1.45; margin-bottom: 8px;
+    }
+    .archive-card-deck { font-size: var(--f-body); color: var(--ink-light); line-height: 1.7; }
+    .archive-card-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .archive-card-date { font-size: var(--f-meta); color: var(--ink-faint); }
+    .diff {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 3px; font-size: var(--f-meta); font-weight: 500;
+    }
+    .diff.beginner    { background: #e8f5e8; color: #2d6a2d; }
+    .diff.intermediate { background: #fff3e0; color: #8a4500; }
+
+    /* ─── SCROLL REVEAL ─────────────────────── */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.45s ease, transform 0.45s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ─── FOOTER ─────────────────────────────── */
+    footer { border-top: 3px double var(--ink); padding: 32px 0; margin-top: 20px; }
+    .footer-inner {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; flex-wrap: wrap; gap: 20px;
+    }
+    .footer-brand { font-family: 'DM Serif Display', serif; font-size: 26px; }
+    .footer-brand em { font-style: normal; color: var(--accent-dark); }
+    .footer-note { font-size: var(--f-meta); color: var(--ink-faint); text-align: right; line-height: 1.75; }
+
+    @media (max-width: 520px) {
+      .day-nav-btn .btn-label { display: none; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div style="font-size: 0.85rem; letter-spacing: 0.1em; color: #888;">VOL. I · 投資小白的每日讀本</div>
-  <h1>投資<em>日報</em></h1>
-  <p class="tagline">Daily Investment Intelligence · For Beginners</p>
+<!-- ─── MASTHEAD ─── -->
+<header class="masthead">
+  <div class="masthead-vol">Vol. I · 投資小白的每日讀本</div>
+  <h1 class="masthead-title">投資<em>日報</em></h1>
+  <p class="masthead-tagline">Daily Investment Intelligence · For Beginners</p>
+  <div class="masthead-orn">
+    <div class="masthead-orn-line"></div>
+    <span>✦</span>
+    <div class="masthead-orn-line"></div>
+  </div>
 </header>
 
-<div class="date-nav">
-  <button class="nav-btn" id="btnPrev" onclick="navDay(-1)">← 前一日</button>
-  <div class="date-display">
-    <div class="date-big" id="dateDisplay">26</div>
-    <div class="date-small" id="dateInfo">2026年5月</div>
+<!-- ─── NAV ─── -->
+<nav class="nav-strip">
+  <div class="container">
+    <div class="nav-inner">
+      <span class="nav-label">篩選往期</span>
+      <button class="nav-chip all chip-active" id="chip-all"      onclick="setFilter('all')">全部</button>
+      <button class="nav-chip stock"           id="chip-stock"    onclick="setFilter('stock')">📈 個股</button>
+      <button class="nav-chip etf"             id="chip-etf"      onclick="setFilter('etf')">🗂 ETF</button>
+      <button class="nav-chip industry"        id="chip-industry" onclick="setFilter('industry')">🏭 產業</button>
+    </div>
   </div>
-  <button class="nav-btn" id="btnNext" onclick="navDay(1)">後一日 →</button>
-</div>
-
-<nav>
-  <button class="filter-btn active" onclick="setFilter('all')">全部</button>
-  <button class="filter-btn" onclick="setFilter('stock')">📈 個股</button>
-  <button class="filter-btn" onclick="setFilter('etf')">🗂 ETF</button>
-  <button class="filter-btn" onclick="setFilter('industry')">🏭 產業</button>
 </nav>
 
-<main id="content">
-  <!-- Content loads here -->
+<main>
+  <div class="container">
+
+    <!-- ─── DAY NAVIGATOR ─── -->
+    <div class="day-nav reveal" id="day-nav">
+      <button class="day-nav-btn" id="btn-prev" onclick="navDay(-1)">
+        ← <span class="btn-label">前一日</span>
+      </button>
+      <div class="day-nav-center">
+        <div class="day-nav-big"  id="nav-day"></div>
+        <div class="day-nav-weekday" id="nav-wd"></div>
+        <div class="day-nav-month"   id="nav-ym"></div>
+        <div id="today-pill" class="today-pill">今日</div>
+      </div>
+      <button class="day-nav-btn" id="btn-next" onclick="navDay(1)">
+        <span class="btn-label">後一日</span> →
+      </button>
+    </div>
+
+    <!-- ─── ARTICLE (dynamic) ─── -->
+    <div id="article-wrap"></div>
+
+  </div>
 </main>
 
+<!-- ─── FOOTER ─── -->
 <footer>
-  本網站內容僅供學習參考，不構成投資建議。投資有風險，進場前請審慎評估。
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">投資<em>日報</em></div>
+      <div class="footer-note">
+        本網站內容僅供學習參考，不構成任何投資建議。<br>
+        投資有風險，進場前請審慎評估自身風險承受能力。
+      </div>
+    </div>
+  </div>
 </footer>
 
 <script>
@@ -296,143 +398,292 @@ const DATA = {
   "2026-05-26": {
     headline: "AI 晶片需求火爆，台股突破 43,000 點！聯發科、聯電齊漲停",
     deck: "美伊地緣政治風險降溫激勵全球市場，台股加權指數今日狂飆 1,376 點至 43,644 點歷史新高。AI 半導體領軍，聯發科、聯電等權值股集體鎖漲停，市場資金風險偏好明顯提升。",
-    source: "CMoney投資新聞",
+    source: "CMoney投資新聞", readingTime: 4, difficulty: "intermediate", difficultyLabel: "進階",
     tags: [{t:"stock",l:"個股"},{t:"industry",l:"半導體"},{t:"industry",l:"AI"}],
-    summary: "台股今日由 <strong>AI 半導體</strong> 強勢領軍，加權指數攻上歷史新高 <strong>43,644 點</strong>，漲幅達 1,376 點。<strong>IC 設計龍頭聯發科</strong> 與 <strong>代工大廠聯電</strong> 同步鎖漲停，反映市場對 AI 晶片持續旺盛需求的信心。",
-    keypoints: ["加權指數突破 43,000 點大關，創造歷史新高","AI 晶片及其供應鏈成為主升浪動力","美伊風險降溫改善全球風險偏好"],
+    summary: `台股今日由 <strong>AI 半導體</strong> 強勢領軍，加權指數攻上歷史新高 <strong>43,644 點</strong>，漲幅達 1,376 點，創下史上第四大漲點。<strong>IC 設計龍頭聯發科</strong> 與 <strong>代工大廠聯電</strong> 同步鎖漲停，面板雙虎友達、群創亦亮燈，反映市場對 AI 晶片持續旺盛需求的信心。美伊地緣政治風險降溫帶來的全球市場風險情緒提升，進一步激勵台股火力全開。`,
+    keypoints: [
+      "加權指數突破 43,000 點大關，創造歷史新高，反映台灣科技業在 AI 浪潮中的核心競爭力。",
+      "AI 晶片及其供應鏈成為主升浪動力，包含設計、製造、封裝等環節全線受惠。",
+      "美伊風險降溫改善全球風險偏好，為台股後續漲勢奠定基礎，但投資人應留意風險管理。",
+      "權值股齊聲走強帶動大盤，中小型股與非電子股也跟漲，市場廣度改善。",
+      "產業面上 AI 伺服器、GPU、記憶體等相關族群仍有支撐，後續關注是否能續創新高。"
+    ],
     terms: [
-      { name: "AI 晶片", en: "AI Chip / GPU", short: "專門用於人工智能運算的微處理器。", full: "AI 晶片是專為機器學習、深度學習等 AI 運算優化的處理器。最著名的是 NVIDIA 的 GPU（圖形處理器），具有大量平行運算核心，能在短時間內處理海量資料，是 AI 訓練與推理的必備工具。", eg: "如果說 CPU 是通才，AI 晶片就是專精於複雜計算的數學天才。" },
-      { name: "加權指數", en: "TAIEX", short: "台股市場的主要指標，涵蓋所有上市公司。", full: "加權指數是台灣證券交易所編制的股價指數，涵蓋交易所上市的全部上市公司。其中權值最重的是台積電、鴻海、聯發科等大型權值股，因此這些公司股價波動會直接影響加權指數漲跌。", eg: "就像一個班級的平均成績反映全班程度，加權指數反映全台股市的整體狀況。" },
-      { name: "漲停", en: "Daily Price Limit Up", short: "股票單日漲幅達上限（通常 10%），無法再往上漲。", full: "台灣股市個股單日漲幅設有上限（漲停），當股價上漲達到上限時就會鎖漲停，無法再往上交易。漲停通常代表該股票因重大利多訊息而受追捧，或是技術面強勢突破。", eg: "就像電梯有最高樓層限制，股票單日漲幅也有上限。" }
+      { name: "AI 晶片", en: "AI Chip / GPU",
+        short: "專門用於人工智能運算的微處理器，如 NVIDIA 的 GPU。速度快、耗能低，是 AI 產業的核心。",
+        full: "AI 晶片是專為機器學習、深度學習等 AI 運算優化的處理器。最著名的是 NVIDIA 的 GPU（圖形處理器），它們具有大量平行運算核心，能在短時間內處理海量資料，是 AI 訓練與推理的必備工具。",
+        eg: "如果說 CPU 是通才，AI 晶片就是專精於複雜計算的數學天才。" },
+      { name: "加權指數", en: "Taiwan Stock Exchange Weighted Index",
+        short: "台股市場的主要指標，涵蓋在交易所上市的所有上市公司，是衡量台灣股市整體表現的尺度。",
+        full: "加權指數是台灣證券交易所編制的股價指數，涵蓋交易所上市的全部上市公司。其中權值最重的是台積電、鴻海、聯發科等大型權值股，因此這些公司股價波動會直接影響加權指數漲跌。",
+        eg: "就像一個班級的平均成績反映全班程度，加權指數反映全台股市的整體狀況。" },
+      { name: "漲停", en: "Daily Price Limit Up",
+        short: "個股單日漲幅達監管上限（通常為 10%），股價停在漲停價，無法再往上漲，通常代表買氣非常旺盛。",
+        full: "台灣股市個股單日漲幅設有上限（漲停），當股價上漲達到上限時就會鎖漲停，無法再往上交易。漲停通常代表該股票因重大利多訊息而受追捧，或是技術面強勢突破。",
+        eg: "就像電梯有最高樓層限制，股票單日漲幅也有上限。" }
     ]
   },
   "2026-05-25": {
-    headline: "台積電法說會透露 AI 晶片訂單強勁信號",
-    deck: "台積電法說會顯示 AI 晶片客戶訂單需求遠超預期，訂單能見度延伸至 2027 年。",
-    source: "工商時報",
-    tags: [{t:"stock",l:"個股"},{t:"industry",l:"半導體"}],
-    summary: "台積電最新<strong>法說會</strong>顯示，來自 NVIDIA、AMD 等 AI 晶片客戶的需求遠超預期。公司已積極擴充產能，訂單<strong>能見度</strong>已延伸至 2027 年底，代表未來收益相對確定。",
-    keypoints: ["產能幾乎全數被預訂，供不應求格局確立","AI 晶片需求強勁","訂單能見度延伸至 2027 年"],
+    headline: "面板雙虎齊漲停！5月飆漲超過 100%，台灣 LCD 產業迎來春天",
+    deck: "群創、友達今日同步鎖漲停，5 月以來漲幅雙雙逾 100%。在 AI 伺服器、高階面板需求帶動下，台灣面板產業擺脫過往「老產業」標籤，成為台股新焦點。",
+    source: "CMoney投資新聞", readingTime: 4, difficulty: "beginner", difficultyLabel: "初級",
+    tags: [{t:"stock",l:"個股"},{t:"industry",l:"面板產業"}],
+    summary: `今日 <strong>面板雙虎</strong>——群創（3481）與友達（2409）——同步鎖漲停，股價創多年新高。群創股價衝至 49.1 元，為 2010 年 4 月以來的高點，5 月以來已上漲 <strong>105%</strong>。這波漲勢背後的驅動力來自 <strong>AI 伺服器</strong> 對高階面板的旺盛需求，加上全球景氣復甦帶來的消費電子反彈。台灣面板業者正趁此機會提升高階產品占比，利潤率明顯改善。`,
+    keypoints: [
+      "面板業投資人要認識『景氣循環』：景氣差時面板價格跌，景氣好時卻能大漲；目前正處於上升期。",
+      "群創、友達從 2023 年的虧損谷底翻身，代表台灣製造業調整能力強，值得初學者觀察。",
+      "AI 相關需求（高階面板、伺服器零件）吸引資金進入傳統製造業，打破「科技股才是寵兒」的迷思。"
+    ],
     terms: [
-      { name: "法說會", en: "Investor Conference", short: "公司向投資人說明財務狀況與展望的會議。", full: "法說會是「法人說明會」的縮寫，公司每季舉辦一次，向機構投資人及散戶公開說明當季財報、未來展望與產業動態。法說會的語氣是否樂觀，往往直接影響股價表現。", eg: "就像學生每季向家長報告成績，並說明下學期的計畫和目標。" }
+      { name: "景氣循環", en: "Economic Cycle",
+        short: "經濟從成長、高峰、衰退、谷底不斷循環的現象。",
+        full: "景氣循環是經濟發展的自然規律。成長期時需求旺盛、利潤高；高峰期產能滿載；衰退期需求下滑、競爭加劇；谷底期企業苦熬，但也是買進的機會。面板業是高度景氣循環產業。",
+        eg: "就像四季循環，春夏（成長期）花開滿地，秋冬（衰退期）草木凋零，來年春天又是新生。" }
     ]
   },
   "2026-05-24": {
-    headline: "高息 ETF 配息創新高，初學者必懂的除息與填息",
-    deck: "00878 國泰永續高股息 ETF 宣布本季每股配發 0.42 元，創設立以來新高。",
-    source: "聯合財經網",
-    tags: [{t:"etf",l:"ETF"}],
-    summary: "00878 國泰永續高股息 ETF 公告 2026 年第二季配息為每股 0.42 元，較去年同期成長 12%。高息 ETF 成為台灣散戶最熱門話題，<strong>除息</strong>、<strong>填息</strong>、<strong>殖利率</strong>等名詞成為新手必學的投資基本功。",
-    keypoints: ["00878 本季殖利率約達 5.8%","除息日前買進才有配息資格","累積型 ETF 長期複利效果更佳"],
+    headline: "台積電法說會透露 AI 晶片訂單強勁信號",
+    deck: "台積電法說會顯示 AI 晶片客戶訂單需求遠超預期，訂單能見度延伸至 2027 年。",
+    source: "工商時報", readingTime: 3, difficulty: "intermediate", difficultyLabel: "進階",
+    tags: [{t:"stock",l:"個股"},{t:"industry",l:"半導體"}],
+    summary: `台積電最新<strong>法說會</strong>顯示，來自 NVIDIA、AMD 等 AI 晶片客戶的需求遠超預期。公司已積極擴充產能，訂單<strong>能見度</strong>已延伸至 2027 年底，代表未來收益相對確定。受此消息激勵，台積電 ADR 在美股盤後大漲逾 3%。`,
+    keypoints: [
+      "CoWoS 先進封裝 2024～2027 年產能幾乎全數被預訂，供不應求格局確立。",
+      "AI 晶片需求強勁，台積電調升全年美元營收成長展望至 +25% 以上。",
+      "外資連續 10 日買超台積電，帶動 0050、00881 等半導體相關 ETF 同步走強。"
+    ],
     terms: [
-      { name: "除息", en: "Ex-Dividend", short: "股票或 ETF 配發股利的分界點。", full: "除息是指公司或 ETF 將已宣告的股利從股價中「扣除」的那一天。除息日當天，股票開盤價會自動調降等同配息的金額。持有人若在除息日前持股，即享有配息資格。", eg: "就像你有一顆 100 元的蘋果，切下 5 元的果肉分給你（配息），剩下的蘋果就值 95 元了。" }
+      { name: "法說會", en: "Investor Conference",
+        short: "上市公司每季向投資人說明財務狀況與展望的正式會議。",
+        full: "法說會是「法人說明會」的縮寫，公司每季舉辦一次，向機構投資人及散戶公開說明當季財報、未來展望與產業動態。法說會的語氣是否樂觀，往往直接影響股價表現。",
+        eg: "就像學生每季向家長報告成績，並說明下學期的計畫和目標。" }
     ]
   },
   "2026-05-23": {
     headline: "特斯拉砍單衝擊台廠，電動車供應鏈承壓",
     deck: "特斯拉大幅削減零組件採購，台灣電控、散熱等零組件廠首當其衝。",
-    source: "財訊雜誌",
+    source: "財訊雜誌", readingTime: 4, difficulty: "intermediate", difficultyLabel: "進階",
     tags: [{t:"industry",l:"電動車"}],
-    summary: "特斯拉宣布第三季將大幅縮減台灣供應商採購量，平均降幅達 15～30%。分析師認為，這波<strong>砍單</strong>主因是 Model 3 改款後<strong>庫存去化</strong>不順，以及中國電動車競爭加劇導致市占流失。",
-    keypoints: ["台灣供應鏈砍單幅度 15～30%","電控與散熱模組廠衝擊最大","關注庫存去化進度"],
-    terms: []
+    summary: `特斯拉宣布第三季將大幅縮減台灣供應商採購量，平均降幅達 15～30%。分析師認為，這波<strong>砍單</strong>主因是 Model 3 改款後<strong>庫存去化</strong>不順，以及中國電動車競爭加劇導致市占流失。`,
+    keypoints: [
+      "特斯拉台灣供應鏈砍單幅度 15～30%，電控與散熱模組廠衝擊最大。",
+      "電動車全球滲透率雖持續成長，但速度不如預期，Tesla 需降低庫存水位。",
+      "分析師建議關注車用 IGBT 庫存去化進度，為下半年訂單回溫的關鍵指標。"
+    ],
+    terms: [
+      { name: "砍單", en: "Order Cut",
+        short: "客戶主動減少原先承諾採購數量的行為。",
+        full: "砍單指品牌廠（如特斯拉）通知供應商減少原本承諾的採購數量。砍單通常發生在終端需求不如預期，或品牌廠庫存水位過高時。",
+        eg: "就像餐廳原本跟食材供應商說要買 100 顆蛋，但生意不好改成只買 70 顆，供應商因此少了 30 顆的收入。" }
+    ]
   },
   "2026-05-22": {
-    headline: "台股上周漲幅領先亞股，外資連續買超",
-    deck: "台股上周累計上漲 2.3%，表現領先亞股，外資連續 5 日買超。",
-    source: "鉅亨網",
-    tags: [{t:"stock",l:"個股"}],
-    summary: "台股上周表現強勁，累計上漲 2.3%，表現領先亞股平均。外資表現積極，連續 5 日買超台股，主要集中在半導體和電子權值股。",
-    keypoints: ["台股上周漲幅 2.3%","外資連續 5 日買超","半導體權值股獲主力青睞"],
-    terms: []
+    headline: "高息 ETF 配息創新高，初學者必懂的除息與填息",
+    deck: "00878 國泰永續高股息 ETF 宣布本季每股配發 0.42 元，創設立以來新高。",
+    source: "聯合財經網", readingTime: 4, difficulty: "beginner", difficultyLabel: "入門",
+    tags: [{t:"etf",l:"ETF"}],
+    summary: `00878 國泰永續高股息 ETF 公告 2026 年第二季配息為每股 0.42 元，較去年同期成長 12%，創設立以來單季新高。高息 ETF 成為台灣散戶最熱門話題，<strong>除息</strong>、<strong>填息</strong>、<strong>殖利率</strong>等名詞成為新手必學的投資基本功。`,
+    keypoints: [
+      "00878 本季殖利率（年化）約達 5.8%，在台股高息 ETF 中屬中上水準。",
+      "除息日前買進才有配息資格；除息後股價會等額調降，需「填息」才算真正獲利。",
+      "累積型 ETF 不配息，直接將收益再投入，長期複利效果更佳，適合不急需現金流的投資者。"
+    ],
+    terms: [
+      { name: "除息", en: "Ex-Dividend",
+        short: "股票或 ETF 配發股利的分界點。除息日當天，股價會自動扣掉配發金額後開盤。",
+        full: "除息是指公司或 ETF 將已宣告的股利從股價中『扣除』的那一天。除息日當天，股票開盤價會自動調降等同配息的金額。持有人若在除息日前持股，即享有配息資格。",
+        eg: "就像你有一顆 100 元的蘋果，切下 5 元的果肉分給你（配息），剩下的蘋果就值 95 元了。" }
+    ]
   }
 };
 
 let currentDay = TODAY;
 let currentFilter = 'all';
 
-function getDate(dateStr) {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  return new Date(y, m - 1, d);
+const WD = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+
+function pd(s){
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y, m-1, d);
 }
 
-function renderDay(day) {
-  currentDay = day;
-  const data = DATA[day];
-  const date = getDate(day);
-  const idx = DAYS.indexOf(day);
+function fmtShort(s){
+  const d = pd(s);
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
 
-  document.getElementById('dateDisplay').textContent = date.getDate();
-  document.getElementById('dateInfo').textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
-  document.getElementById('btnPrev').disabled = idx === 0;
-  document.getElementById('btnNext').disabled = idx === DAYS.length - 1;
+function renderDay(key, anim = true){
+  currentDay = key;
+  const d = DATA[key];
+  const idx = DAYS.indexOf(key);
+  const date = pd(key);
+  const isToday = key === TODAY;
 
-  const tags = data.tags.map(t => `<span class="tag ${t.t}">${t.l}</span>`).join('');
-  const kps = data.keypoints.map((k, i) => `<li class="kp-item"><span class="kp-num">${i + 1}</span><span>${k}</span></li>`).join('');
-  const terms = data.terms.map(t => `
+  document.getElementById('nav-day').textContent = date.getDate();
+  document.getElementById('nav-wd').textContent = WD[date.getDay()];
+  document.getElementById('nav-ym').textContent = `${date.getFullYear()}年 ${date.getMonth()+1}月`;
+  document.getElementById('today-pill').style.display = isToday ? 'inline-block' : 'none';
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').disabled = idx === DAYS.length - 1;
+
+  const wrap = document.getElementById('article-wrap');
+  const doRender = () => {
+    wrap.innerHTML = buildHTML(d, key);
+    setupReveal();
+    if (anim) wrap.classList.remove('fading');
+  };
+
+  if (anim){
+    wrap.classList.add('fading');
+    setTimeout(doRender, 240);
+  } else {
+    doRender();
+  }
+}
+
+function buildHTML(d, key){
+  const tagsHTML = d.tags.map(t => `<span class="tag ${t.t}">${t.l}</span>`).join('');
+  const kpHTML = d.keypoints.map((k, i) => `
+    <li class="kp-item">
+      <span class="kp-num">${i+1}</span>
+      <span class="kp-txt">${k}</span>
+    </li>`).join('');
+  const termsHTML = d.terms.map(t => `
     <div class="term-card" onclick="toggleTerm(this)">
       <div class="term-name">${t.name}</div>
       <div class="term-en">${t.en}</div>
       <div class="term-short">${t.short}</div>
       <div class="term-full">
-        <p>${t.full}</p>
+        <p class="term-full-txt">${t.full}</p>
         <div class="term-eg">💡 ${t.eg}</div>
       </div>
-    </div>
-  `).join('');
+      <div class="term-hint">↓ 點擊展開</div>
+    </div>`).join('');
 
-  document.getElementById('content').innerHTML = `
-    <article>
-      <div class="article-kicker">📰 今日精選</div>
-      <h2>${data.headline}</h2>
-      <p class="deck">${data.deck}</p>
-      <div class="article-meta">
-        <span>來源：${data.source}</span> · <span>${day}</span>
+  const archiveHTML = buildArchiveCards(key);
+
+  return `
+    <article class="reveal">
+      <div class="article-kicker">
+        <span class="kicker-txt">今日精選</span>
+        <span class="kicker-line"></span>
       </div>
-      <div class="tag-list">${tags}</div>
+      <h2 class="article-headline">${d.headline}</h2>
+      <p class="article-deck">${d.deck}</p>
+      <div class="article-meta">
+        <span>來源：${d.source}</span>
+        <span class="meta-sep">·</span>
+        <span>${fmtShort(key)}</span>
+        <span class="meta-sep">·</span>
+        <span>⏱ 閱讀約 ${d.readingTime} 分鐘</span>
+      </div>
+      <div class="tag-list">${tagsHTML}</div>
       <div class="two-col">
         <div class="section-block">
           <div class="block-label">文章摘要</div>
-          <p>${data.summary}</p>
+          <p class="summary-text">${d.summary}</p>
         </div>
         <div class="section-block">
-          <div class="block-label">重點整理</div>
-          <ul class="kp-list">${kps}</ul>
+          <div class="block-label">三大重點</div>
+          <ul class="kp-list">${kpHTML}</ul>
         </div>
       </div>
     </article>
-    ${data.terms.length > 0 ? `
-    <div class="glossary-sec">
-      <div class="glossary-title">📖 今日關鍵詞彙</div>
-      <div class="glossary-grid">${terms}</div>
+
+    <div class="glossary-sec reveal">
+      <div class="glossary-hd">
+        <span class="glossary-lbl">📖 今日名詞解釋</span>
+        <div class="glossary-rule"></div>
+        <span class="glossary-hint">點卡片查看說明</span>
+      </div>
+      <div class="glossary-grid">${termsHTML}</div>
     </div>
-    ` : ''}
-  `;
+
+    <div class="orn reveal">
+      <div class="orn-line"></div>
+      <span class="orn-sym">✦ ✦ ✦</span>
+      <div class="orn-line"></div>
+    </div>
+
+    <div class="archive-sec reveal">
+      <div class="archive-hd">
+        <h3 class="archive-title">往期文章</h3>
+        <div class="archive-rule"></div>
+      </div>
+      <div class="archive-list">${archiveHTML}</div>
+    </div>`;
 }
 
-function navDay(dir) {
-  const idx = DAYS.indexOf(currentDay);
-  const newIdx = idx + dir;
-  if (newIdx >= 0 && newIdx < DAYS.length) {
-    renderDay(DAYS[newIdx]);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function buildArchiveCards(exceptKey){
+  const filtered = [...DAYS].reverse()
+    .filter(k => k !== exceptKey)
+    .filter(k => currentFilter === 'all' || DATA[k].tags.some(t => t.t === currentFilter));
+
+  if (!filtered.length){
+    const labels = {stock:'個股', etf:'ETF', industry:'產業'};
+    return `<div style="padding:32px 0; color:var(--ink-faint); font-size:var(--f-body); text-align:center;">
+      目前存檔中還沒有「${labels[currentFilter]}」類別的文章。
+    </div>`;
+  }
+
+  return filtered.map(k => {
+    const a = DATA[k];
+    const tagsRow = a.tags.slice(0, 2).map(t => `<span class="tag ${t.t}">${t.l}</span>`).join('');
+    return `<div class="archive-card" onclick="navigateTo('${k}')">
+      <div>
+        <div class="archive-card-tags">${tagsRow}</div>
+        <div class="archive-card-hl">${a.headline}</div>
+        <div class="archive-card-deck">${a.deck}</div>
+      </div>
+      <div class="archive-card-meta">
+        <span class="archive-card-date">${fmtShort(k)}</span>
+        <span class="diff ${a.difficulty}">${a.difficultyLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderArchive(){
+  const el = document.querySelector('.archive-list');
+  if (el) el.innerHTML = buildArchiveCards(currentDay);
+}
+
+function setFilter(f){
+  currentFilter = f;
+  ['all','stock','etf','industry'].forEach(id => {
+    const chip = document.getElementById('chip-' + id);
+    if (chip) chip.classList.toggle('chip-active', id === f);
+  });
+  renderArchive();
+}
+
+function navDay(dir){
+  const i = DAYS.indexOf(currentDay) + dir;
+  if (i >= 0 && i < DAYS.length){
+    renderDay(DAYS[i]);
+    window.scrollTo({top: 0, behavior: 'smooth'});
   }
 }
 
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.includes(f === 'all' ? '全部' : f === 'stock' ? '個股' : f === 'etf' ? 'ETF' : '產業'));
-  });
+function navigateTo(key){
+  renderDay(key);
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-function toggleTerm(el) {
-  const isOpen = el.classList.contains('open');
+function toggleTerm(el){
+  const was = el.classList.contains('open');
   document.querySelectorAll('.term-card').forEach(c => c.classList.remove('open'));
-  if (!isOpen) el.classList.add('open');
+  if (!was) el.classList.add('open');
 }
 
-renderDay(TODAY);
+function setupReveal(){
+  const reveals = document.querySelectorAll('.reveal');
+  reveals.forEach(el => el.classList.add('in'));
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderDay(TODAY, false);
+});
 </script>
 
 </body>
