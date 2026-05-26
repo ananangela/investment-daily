@@ -149,6 +149,11 @@
       background: var(--accent); color: white;
       font-size: var(--f-deco); letter-spacing: 0.12em;
       padding: 2px 10px; border-radius: 2px; margin-top: 6px; font-weight: 500;
+      transition: all 0.2s;
+    }
+    .today-pill:hover {
+      background: var(--accent-dark);
+      transform: scale(1.05);
     }
 
     /* ─── ARTICLE AREA ──────────────────────── */
@@ -364,7 +369,7 @@
         <div class="day-nav-big"  id="nav-day"></div>
         <div class="day-nav-weekday" id="nav-wd"></div>
         <div class="day-nav-month"   id="nav-ym"></div>
-        <div id="today-pill" class="today-pill">今日</div>
+        <button id="today-btn" class="today-pill" onclick="navigateTo(TODAY)" style="display:none; border:none; background:none; cursor:pointer; padding:0; font-size:0;">今日</button>
       </div>
       <button class="day-nav-btn" id="btn-next" onclick="navDay(1)">
         <span class="btn-label">後一日</span> →
@@ -522,7 +527,7 @@ function renderDay(key, anim = true){
   document.getElementById('nav-day').textContent = date.getDate();
   document.getElementById('nav-wd').textContent = WD[date.getDay()];
   document.getElementById('nav-ym').textContent = `${date.getFullYear()}年 ${date.getMonth()+1}月`;
-  document.getElementById('today-pill').style.display = isToday ? 'inline-block' : 'none';
+  document.getElementById('today-btn').style.display = isToday ? 'none' : 'inline-block';
   document.getElementById('btn-prev').disabled = idx === 0;
   document.getElementById('btn-next').disabled = idx === DAYS.length - 1;
 
