@@ -198,6 +198,17 @@
       gap: 12px; font-size: var(--f-meta); color: var(--ink-faint); margin-bottom: 22px;
     }
     .meta-sep { color: var(--rule); }
+    .source-link {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .source-link:hover {
+      color: var(--accent-dark);
+      border-bottom-color: var(--accent-dark);
+    }
 
     .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
     .tag {
@@ -420,7 +431,7 @@ const DATA = {
   "2026-05-26": {
     headline: "AI 晶片需求火爆，台股突破 43,000 點！聯發科、聯電齊漲停",
     deck: "美伊地緣政治風險降溫激勵全球市場，台股加權指數今日狂飆 1,376 點至 43,644 點歷史新高。AI 半導體領軍，聯發科、聯電等權值股集體鎖漲停，市場資金風險偏好明顯提升。",
-    source: "CMoney投資新聞", readingTime: 4, difficulty: "intermediate", difficultyLabel: "進階",
+    source: "CMoney投資新聞", sourceUrl: "https://www.cmoney.tw", readingTime: 4, difficulty: "intermediate", difficultyLabel: "進階",
     tags: [{t:"stock",l:"個股"},{t:"industry",l:"半導體"},{t:"industry",l:"AI"}],
     summary: `台股今日由 <strong>AI 半導體</strong> 強勢領軍，加權指數攻上歷史新高 <strong>43,644 點</strong>，漲幅達 1,376 點，創下史上第四大漲點。<strong>IC 設計龍頭聯發科</strong> 與 <strong>代工大廠聯電</strong> 同步鎖漲停，面板雙虎友達、群創亦亮燈，反映市場對 AI 晶片持續旺盛需求的信心。美伊地緣政治風險降溫帶來的全球市場風險情緒提升，進一步激勵台股火力全開。`,
     keypoints: [
@@ -448,7 +459,7 @@ const DATA = {
   "2026-05-25": {
     headline: "面板雙虎齊漲停！5月飆漲超過 100%，台灣 LCD 產業迎來春天",
     deck: "群創、友達今日同步鎖漲停，5 月以來漲幅雙雙逾 100%。在 AI 伺服器、高階面板需求帶動下，台灣面板產業擺脫過往「老產業」標籤，成為台股新焦點。",
-    source: "CMoney投資新聞", readingTime: 4, difficulty: "beginner", difficultyLabel: "初級",
+    source: "CMoney投資新聞", sourceUrl: "https://www.cmoney.tw", readingTime: 4, difficulty: "beginner", difficultyLabel: "初級",
     tags: [{t:"stock",l:"個股"},{t:"industry",l:"面板產業"}],
     summary: `今日 <strong>面板雙虎</strong>——群創（3481）與友達（2409）——同步鎖漲停，股價創多年新高。群創股價衝至 49.1 元，為 2010 年 4 月以來的高點，5 月以來已上漲 <strong>105%</strong>。這波漲勢背後的驅動力來自 <strong>AI 伺服器</strong> 對高階面板的旺盛需求，加上全球景氣復甦帶來的消費電子反彈。台灣面板業者正趁此機會提升高階產品占比，利潤率明顯改善。`,
     keypoints: [
@@ -466,7 +477,7 @@ const DATA = {
   "2026-05-24": {
     headline: "台積電法說會透露 AI 晶片訂單強勁信號",
     deck: "台積電法說會顯示 AI 晶片客戶訂單需求遠超預期，訂單能見度延伸至 2027 年。",
-    source: "工商時報", readingTime: 3, difficulty: "intermediate", difficultyLabel: "進階",
+    source: "工商時報", sourceUrl: "https://www.ctee.com.tw", readingTime: 3, difficulty: "intermediate", difficultyLabel: "進階",
     tags: [{t:"stock",l:"個股"},{t:"industry",l:"半導體"}],
     summary: `台積電最新<strong>法說會</strong>顯示，來自 NVIDIA、AMD 等 AI 晶片客戶的需求遠超預期。公司已積極擴充產能，訂單<strong>能見度</strong>已延伸至 2027 年底，代表未來收益相對確定。受此消息激勵，台積電 ADR 在美股盤後大漲逾 3%。`,
     keypoints: [
@@ -484,7 +495,7 @@ const DATA = {
   "2026-05-23": {
     headline: "特斯拉砍單衝擊台廠，電動車供應鏈承壓",
     deck: "特斯拉大幅削減零組件採購，台灣電控、散熱等零組件廠首當其衝。",
-    source: "財訊雜誌", readingTime: 4, difficulty: "intermediate", difficultyLabel: "進階",
+    source: "財訊雜誌", sourceUrl: "https://www.wealth.com.tw", readingTime: 4, difficulty: "intermediate", difficultyLabel: "進階",
     tags: [{t:"industry",l:"電動車"}],
     summary: `特斯拉宣布第三季將大幅縮減台灣供應商採購量，平均降幅達 15～30%。分析師認為，這波<strong>砍單</strong>主因是 Model 3 改款後<strong>庫存去化</strong>不順，以及中國電動車競爭加劇導致市占流失。`,
     keypoints: [
@@ -502,7 +513,7 @@ const DATA = {
   "2026-05-22": {
     headline: "高息 ETF 配息創新高，初學者必懂的除息與填息",
     deck: "00878 國泰永續高股息 ETF 宣布本季每股配發 0.42 元，創設立以來新高。",
-    source: "聯合財經網", readingTime: 4, difficulty: "beginner", difficultyLabel: "入門",
+    source: "聯合財經網", sourceUrl: "https://udn.com/news/finance", readingTime: 4, difficulty: "beginner", difficultyLabel: "入門",
     tags: [{t:"etf",l:"ETF"}],
     summary: `00878 國泰永續高股息 ETF 公告 2026 年第二季配息為每股 0.42 元，較去年同期成長 12%，創設立以來單季新高。高息 ETF 成為台灣散戶最熱門話題，<strong>除息</strong>、<strong>填息</strong>、<strong>殖利率</strong>等名詞成為新手必學的投資基本功。`,
     keypoints: [
@@ -593,7 +604,7 @@ function buildHTML(d, key){
       <h2 class="article-headline">${d.headline}</h2>
       <p class="article-deck">${d.deck}</p>
       <div class="article-meta">
-        <span>來源：${d.source}</span>
+        <span>來源：<a href="${d.sourceUrl}" target="_blank" class="source-link">${d.source}</a></span>
         <span class="meta-sep">·</span>
         <span>${fmtShort(key)}</span>
         <span class="meta-sep">·</span>
