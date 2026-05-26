@@ -145,27 +145,30 @@
     }
     .day-nav-month { font-size: var(--f-meta); color: var(--ink-faint); letter-spacing: 0.08em; margin-top: 4px; }
     .today-btn {
-      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
       background: var(--accent);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
+      padding: 6px 12px;
+      border-radius: 3px;
       font-size: var(--f-meta);
       font-weight: 500;
       cursor: pointer;
-      margin-top: 12px;
       transition: all 0.2s;
       font-family: inherit;
       letter-spacing: 0.04em;
+      white-space: nowrap;
+      display: none;
     }
-    .today-btn:hover:not(:disabled) {
+    .today-btn.show {
+      display: inline-block;
+    }
+    .today-btn:hover {
       background: var(--accent-dark);
       transform: translateY(-2px);
-    }
-    .today-btn:disabled {
-      opacity: 0.5;
-      cursor: default;
     }
 
     /* ─── ARTICLE AREA ──────────────────────── */
@@ -381,11 +384,13 @@
         <div class="day-nav-big"  id="nav-day"></div>
         <div class="day-nav-weekday" id="nav-wd"></div>
         <div class="day-nav-month"   id="nav-ym"></div>
-        <button id="today-btn" class="today-btn" onclick="navigateTo(TODAY)">回到今日</button>
       </div>
-      <button class="day-nav-btn" id="btn-next" onclick="navDay(1)">
-        <span class="btn-label">後一日</span> →
-      </button>
+      <div style="position: relative;">
+        <button class="day-nav-btn" id="btn-next" onclick="navDay(1)">
+          <span class="btn-label">後一日</span> →
+        </button>
+        <button id="today-btn" class="today-btn" onclick="navigateTo('2026-05-26')">回到今日</button>
+      </div>
     </div>
 
     <!-- ─── ARTICLE (dynamic) ─── -->
@@ -539,7 +544,7 @@ function renderDay(key, anim = true){
   document.getElementById('nav-day').textContent = date.getDate();
   document.getElementById('nav-wd').textContent = WD[date.getDay()];
   document.getElementById('nav-ym').textContent = `${date.getFullYear()}年 ${date.getMonth()+1}月`;
-  document.getElementById('today-btn').style.display = isToday ? 'none' : 'inline-block';
+  document.getElementById('today-btn').classList.toggle('show', !isToday);
   document.getElementById('btn-prev').disabled = idx === 0;
   document.getElementById('btn-next').disabled = idx === DAYS.length - 1;
 
