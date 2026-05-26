@@ -424,10 +424,26 @@
 </footer>
 
 <script>
-const DAYS = ["2026-05-26","2026-05-25","2026-05-24","2026-05-23","2026-05-22"];
-const TODAY = "2026-05-26";
+let DATA = {};
+let DAYS = [];
+const TODAY = new Date().toISOString().split('T')[0];
 
-const DATA = {
+async function loadArticles() {
+  try {
+    const response = await fetch('./articles.json');
+    DATA = await response.json();
+    DAYS = Object.keys(DATA).sort().reverse();
+
+    if (DAYS.length > 0) {
+      renderDay(DAYS[0], false);
+    }
+  } catch (error) {
+    console.error('Error loading articles:', error);
+    renderDay(DAYS[0], false);
+  }
+}
+
+const DATA_BACKUP = {
   "2026-05-26": {
     headline: "AI 晶片需求火爆，台股突破 43,000 點！聯發科、聯電齊漲停",
     deck: "美伊地緣政治風險降溫激勵全球市場，台股加權指數今日狂飆 1,376 點至 43,644 點歷史新高。AI 半導體領軍，聯發科、聯電等權值股集體鎖漲停，市場資金風險偏好明顯提升。",
@@ -714,9 +730,7 @@ function setupReveal(){
   reveals.forEach(el => el.classList.add('in'));
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  renderDay(TODAY, false);
-});
+document.addEventListener('DOMContentLoaded', loadArticles);
 </script>
 
 </body>
