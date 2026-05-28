@@ -439,7 +439,11 @@ async function loadArticles() {
     }
   } catch (error) {
     console.error('Error loading articles:', error);
-    renderDay(DAYS[0], false);
+    DATA = DATA_BACKUP;
+    DAYS = Object.keys(DATA).sort().reverse();
+    if (DAYS.length > 0) {
+      renderDay(DAYS[0], false);
+    }
   }
 }
 
