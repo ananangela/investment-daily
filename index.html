@@ -388,7 +388,7 @@
 
     <!-- ─── DAY NAVIGATOR ─── -->
     <div class="day-nav reveal" id="day-nav">
-      <button class="day-nav-btn" id="btn-prev" onclick="navDay(-1)">
+      <button class="day-nav-btn" id="btn-prev" onclick="navDay(1)">
         ← <span class="btn-label">前一日</span>
       </button>
       <div class="day-nav-center">
@@ -397,7 +397,7 @@
         <div class="day-nav-month"   id="nav-ym"></div>
       </div>
       <div style="position: relative;">
-        <button class="day-nav-btn" id="btn-next" onclick="navDay(1)">
+        <button class="day-nav-btn" id="btn-next" onclick="navDay(-1)">
           <span class="btn-label">後一日</span> →
         </button>
         <button id="today-btn" class="today-btn" onclick="navigateTo('2026-05-26')">回到今日</button>
@@ -576,8 +576,8 @@ function renderDay(key, anim = true){
   document.getElementById('nav-wd').textContent = WD[date.getDay()];
   document.getElementById('nav-ym').textContent = `${date.getFullYear()}年 ${date.getMonth()+1}月`;
   document.getElementById('today-btn').classList.toggle('show', !isToday);
-  document.getElementById('btn-prev').disabled = idx === 0;
-  document.getElementById('btn-next').disabled = idx === DAYS.length - 1;
+  document.getElementById('btn-prev').disabled = idx === DAYS.length - 1;
+  document.getElementById('btn-next').disabled = idx === 0;
 
   const wrap = document.getElementById('article-wrap');
   const doRender = () => {
