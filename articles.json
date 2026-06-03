@@ -1,4 +1,61 @@
 {
+  "2026-06-03": {
+    "headline": "台股站穩43500點，外資連6日買超；聯發科漲停再創新高",
+    "deck": "台股今日延續強勢，加權指數站穩43,500點，外資連續第6日買超超過280億元。聯發科漲停創新高，台積電、鴻海等權值股齊聲走強，市場對AI產業前景充滿信心。",
+    "source": "Yahoo股市、CMoney投資新聞",
+    "sourceUrl": "https://tw.stock.yahoo.com",
+    "readingTime": 4,
+    "difficulty": "beginner",
+    "difficultyLabel": "初級",
+    "tags": [
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "半導體"
+      }
+    ],
+    "summary": "台股今日延續上升趨勢，加權指數站穩 <strong>43,500 點</strong>，創造新的支撐位。<strong>聯發科</strong> 今日漲停，股價衝至 <strong>1,450 元</strong> 創歷史新高，<strong>台積電</strong> 亦上漲 35 元至 <strong>2,415 元</strong>，<strong>鴻海</strong> 上漲 38 元至 <strong>241 元</strong>。<strong>外資連續第 6 日買超</strong>，單日買超 <strong>280 億元</strong>，為本週來最高單日買超金額。分析師認為，台股已形成『<strong>強勢整理</strong>』格局，有望挑戰 <strong>44,000 點</strong> 至 <strong>45,000 點</strong>。",
+    "keypoints": [
+      "43,500點成為新的支撐位，說明台股上升趨勢已確立，初學者應學會『支撐位買點』的概念。",
+      "聯發科漲停創歷史新高，作為台股的『風向球』，其強勢表現預示台股後市看好。",
+      "外資連6日買超超280億，創本週新高，代表國際資金持續看好台灣科技股，『機構共識』更加堅定。",
+      "權值股全線走強帶動大盤，台積電、鴻海、聯發科三檔股票表現一致，市場『廣度向好』。",
+      "強勢整理後通常會有較大幅度漲幅，初學者應『相信趨勢』，不要在上升趨勢中空手。"
+    ],
+    "terms": [
+      {
+        "name": "強勢整理",
+        "en": "Consolidation in Uptrend",
+        "short": "股價在上升趨勢中，暫時停止上漲進行整理，為下一波漲勢蓄積能量。",
+        "full": "強勢整理是指股價在明確上升趨勢中出現的暫時性盤整。此時股價在高檔反覆波動，既不大漲也不大跌，這是『好的整理』。與之相對的是『弱勢整理』（在下跌途中停止下跌），這是『不好的整理』。台股目前43,500點附近的整理就是強勢整理，預示後續還有漲勢。",
+        "eg": "💡 爬山時，到達一個平台停下來休息（整理），然後繼續往上爬。這是『強勢整理』。如果半路滑下來再停下，那才是危險。"
+      },
+      {
+        "name": "機構共識",
+        "en": "Institutional Consensus",
+        "short": "大型投資機構（外資、投信、自營商）都看好某個方向，形成一致的買進或賣出立場。",
+        "full": "當多家機構投資人同時買超或賣超時，就形成『機構共識』。機構投資人通常掌握最多信息、研究最深入，他們的共識往往代表市場的真實方向。外資連6日買超就是機構共識的表現，說明國際大型基金都看好台股。初學者應該『跟著機構走』，成功機率較高。",
+        "eg": "💡 如果班上所有老師都認為某個學生會成功，那他成功的機率就很高。機構共識就像『專家的共同判斷』。"
+      },
+      {
+        "name": "支撐位買點",
+        "en": "Support Level Entry Point",
+        "short": "當股價回落到支撐位時，買進的機會，因為支撐位是投資人願意進場的價位。",
+        "full": "支撐位是股價容易反彈的位置。43,500點已經成為支撐位，說明很多投資人在此價位願意買進。當股價跌到支撐位時，就是『好的買點』。相反，股價跌破支撐位時，就要警惕。初學者應該學會『在支撐位進場』，風險較低。",
+        "eg": "💡 想像一條彈簧，被壓低後會反彈。43,500點就像彈簧的位置，股價掉下來就會反彈。"
+      },
+      {
+        "name": "相信趨勢",
+        "en": "Follow the Trend",
+        "short": "在明確的上升或下跌趨勢中，不要預測反轉，而是『順勢而為』，跟著趨勢操作。",
+        "full": "『趨勢是你的朋友』是投資界的老話。當股市處於明確上升趨勢時（高點越來越高、低點也越來越高），就應該『持股或買進』，而不是擔心『會不會要跌』。很多初學者在上升趨勢中空手觀望，結果錯失大漲行情。相反，在明確下跌趨勢中應該『避險或觀望』。",
+        "eg": "💡 河流往下流，你應該『順流而下』，而不是『逆流而上』。趨勢向上時，跟著上升；趨勢向下時，跟著下降。"
+      }
+    ]
+  },
   "2026-06-02": {
     "headline": "台股收復4.3萬點！鴻海強勢領漲，AI供應鏈全線火熱",
     "deck": "台股反彈強勁，加權指數收復 43,000 點關卡，鴻海上漲 45 元創近期新高。AI 供應鏈上中下游齊聲走強，法人買超超過 400 億元。",
@@ -8,8 +65,14 @@
     "difficulty": "beginner",
     "difficultyLabel": "初級",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "電子"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "電子"
+      }
     ],
     "summary": "台股今日強勢反彈，加權指數重新站上 <strong>43,000 點</strong>，盤中一度衝高至 <strong>43,456 點</strong>。<strong>鴻海</strong>股價大漲 45 元至 203 元，創造近期新高，帶動台積電、聯發科等權值股同步走強。<strong>AI 供應鏈全面火熱</strong>，從晶片設計、製造到記憶體、散熱模組等產業全線受惠。外資與投信聯手買超超過 400 億元，顯示國際資金對台股後市充滿信心。",
     "keypoints": [
@@ -59,8 +122,14 @@
     "difficulty": "beginner",
     "difficultyLabel": "初級",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "半導體"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "半導體"
+      }
     ],
     "summary": "<strong>端午連假前夕</strong>，台股呈現『高檔震盪』格局。加權指數漲幅收斂，僅上漲 <strong>89 點</strong> 至 <strong>42,987 點</strong>。<strong>聯發科</strong>上漲 50 元至 1,380 元創新高，<strong>台積電</strong>亦漲至 2,380 元創新高，權值股續創新猷。然而，成交量萎縮至 <strong>1.2 兆元</strong>，為近期新低，反映投資人在連假前觀望氛圍濃厚。分析師認為，連假歸來後才是決定後續行情走勢的關鍵。",
     "keypoints": [
@@ -103,8 +172,14 @@
     "difficulty": "intermediate",
     "difficultyLabel": "進階",
     "tags": [
-      {"t": "index", "l": "大盤"},
-      {"t": "industry", "l": "AI晶片"}
+      {
+        "t": "index",
+        "l": "大盤"
+      },
+      {
+        "t": "industry",
+        "l": "AI晶片"
+      }
     ],
     "summary": "台股延續上升趨勢，加權指數盤中攻上 <strong>44,237 點</strong>，創造台股歷史新高紀錄。<strong>外資連續第 5 日買超</strong>，單日買超金額達 <strong>237 億元</strong>，創下 5 月以來新高。<strong>5 月份台股漲幅達 8.2%</strong>，為今年開年至今單月表現最強。驅動因素來自於 <strong>AI 晶片需求強勁</strong>、<strong>記憶體族群接力上漲</strong>，以及 <strong>NVIDIA CEO 黃仁勳訪台</strong>激勵市場情緒。分析師認為，台股有機會挑戰 <strong>44,500 點</strong>，但需要小心高檔獲利了結的壓力。",
     "keypoints": [
@@ -147,8 +222,14 @@
     "difficulty": "beginner",
     "difficultyLabel": "初級",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "AI"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "AI"
+      }
     ],
     "summary": "台股今日強勢突破，加權指數上漲 <strong>113 點</strong> 至 <strong>44,100 點</strong>，逼近 <strong>4.4 萬點</strong> 心理關卡。<strong>聯發科</strong>上漲 68 元至 1,330 元，<strong>台積電</strong>上漲 28 元至 2,352 元，雙雙創近期新高。<strong>AI 相關族群</strong>（包括晶片設計、製造、散熱、伺服器零件等）全線走強，外資和投信聯手買超超過 <strong>350 億元</strong>。分析師普遍看好 6 月行情，認為台股有望挑戰 <strong>44,500 點至 45,000 點</strong>，但投資人應留意『高檔風險』。",
     "keypoints": [
@@ -191,8 +272,14 @@
     "difficulty": "beginner",
     "difficultyLabel": "初級",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "記憶體"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "記憶體"
+      }
     ],
     "summary": "台股在 AI 晶片漲勢後，記憶體族群接力成為市場焦點。<strong>華邦電</strong>第一季 EPS 達 <strong>2.25 元</strong>，受惠於 NOR Flash 供給偏緊與 16 奈米 DRAM 量產，外資 5 月以來除一天外均買超，累計買超 <strong>16.4 萬張</strong>。<strong>聯電</strong>首季 EPS 翻倍至 <strong>1.29 元</strong>，股價漲停創 <strong>26 年波段高</strong>。<strong>南亞科</strong>、<strong>旺宏</strong>等記憶體族群同步走強。這波輪動顯示市場從高檔 AI 晶片轉向基礎設施記憶體，反映產業鏈的需求多元化。",
     "keypoints": [
@@ -242,8 +329,14 @@
     "difficulty": "beginner",
     "difficultyLabel": "初級",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "記憶體"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "記憶體"
+      }
     ],
     "summary": "台股27日強勢反彈，加權指數上漲 <strong>731 點</strong>，收盤指數超過 42,000 點。盤中成交量更創下驚人的 <strong>1.47 兆元</strong>，刷新台股史上最大成交量紀錄。記憶體股表現亮眼，華邦電二度涨停，聯電、南亞科等族群齊聲走強。台積電上漲 30 元至 2,300 元，恢復漲勢。此波反彈顯示市場底部築成，機構投資人積極布局，外資持續買超，為後續漲勢奠定基礎。",
     "keypoints": [
@@ -293,9 +386,18 @@
     "difficulty": "beginner",
     "difficultyLabel": "初級",
     "tags": [
-      {"t": "index", "l": "大盤"},
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "AI晶片"}
+      {
+        "t": "index",
+        "l": "大盤"
+      },
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "AI晶片"
+      }
     ],
     "summary": "台股今日改寫歷史新高，盤中衝上 <strong>44,097.63 點</strong>，反映市場對台灣科技產業的信心。雖然終場因獲利了結下跌 119 點，但外資法人仍站在買方，持續買超 <strong>355.5 億元</strong>。AI 晶片龍頭 <strong>聯發科</strong> 和 <strong>台積電</strong> 帶領權值股齊聲走強，聯發科更創收盤新高。NVIDIA執行長黃仁勳訪台與台積電董事長魏哲家會面，進一步激勵市場對 AI 供應鏈的樂觀預期。",
     "keypoints": [
@@ -345,9 +447,18 @@
     "difficulty": "intermediate",
     "difficultyLabel": "進階",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "半導體"},
-      {"t": "industry", "l": "AI"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "半導體"
+      },
+      {
+        "t": "industry",
+        "l": "AI"
+      }
     ],
     "summary": "台股今日由 <strong>AI 半導體</strong> 強勢領軍，加權指數攻上歷史新高 <strong>43,644 點</strong>，漲幅達 1,376 點，創下史上第四大漲點。<strong>IC 設計龍頭聯發科</strong> 與 <strong>代工大廠聯電</strong> 同步鎖漲停，面板雙虎友達、群創亦亮燈，反映市場對 AI 晶片持續旺盛需求的信心。美伊地緣政治風險降溫帶來的全球市場風險情緒提升，進一步激勵台股火力全開。",
     "keypoints": [
@@ -390,8 +501,14 @@
     "difficulty": "beginner",
     "difficultyLabel": "初級",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "面板產業"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "面板產業"
+      }
     ],
     "summary": "今日 <strong>面板雙虎</strong>——群創（3481）與友達（2409）——同步鎖漲停，股價創多年新高。群創股價衝至 49.1 元，為 2010 年 4 月以來的高點，5 月以來已上漲 <strong>105%</strong>。這波漲勢背後的驅動力來自 <strong>AI 伺服器</strong> 對高階面板的旺盛需求，加上全球景氣復甦帶來的消費電子反彈。台灣面板業者正趁此機會提升高階產品占比，利潤率明顯改善。",
     "keypoints": [
@@ -418,8 +535,14 @@
     "difficulty": "intermediate",
     "difficultyLabel": "進階",
     "tags": [
-      {"t": "stock", "l": "個股"},
-      {"t": "industry", "l": "半導體"}
+      {
+        "t": "stock",
+        "l": "個股"
+      },
+      {
+        "t": "industry",
+        "l": "半導體"
+      }
     ],
     "summary": "台積電最新<strong>法說會</strong>顯示，來自 NVIDIA、AMD 等 AI 晶片客戶的需求遠超預期。公司已積極擴充產能，訂單<strong>能見度</strong>已延伸至 2027 年底，代表未來收益相對確定。受此消息激勵，台積電 ADR 在美股盤後大漲逾 3%。",
     "keypoints": [
