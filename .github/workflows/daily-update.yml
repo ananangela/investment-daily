@@ -1,0 +1,64 @@
+name: 每日投資日報更新
+
+on:
+  schedule:
+    # 每天 00:00 UTC = 台灣時間 08:00
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 允許手動觸發
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: 檢查今天是否已有文章
+        id: check
+        run: |
+          TODAY=$(TZ=Asia/Taipei date +%Y-%m-%d)
+          echo "TODAY=$TODAY" >> $GITHUB_OUTPUT
+          SKIP=$(python3 -c "
+          import json
+          with open('articles.json','r',encoding='utf-8') as f:
+              data = json.load(f)
+          print('true' if '$TODAY' in data else 'false')
+          ")
+          echo "SKIP=$SKIP" >> $GITHUB_OUTPUT
+          echo "今天日期: $TODAY，已有文章: $SKIP"
+
+      - name: 執行更新腳本
+        if: steps.check.outputs.SKIP == 'false'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python3 update_daily.py
+
+      - name: Git commit & push
+        if: steps.check.outputs.SKIP == 'false'
+        run: |
+          TODAY=${{ steps.check.outputs.TODAY }}
+          TITLE=$(python3 -c "
+          import json
+          with open('articles.json','r',encoding='utf-8') as f:
+              d = json.load(f)
+          print(d.get('$TODAY', {}).get('headline', '更新'))
+          ")
+          git config user.name "Investment Daily Bot"
+          git config user.email "angela_tseng@cmoney.com.tw"
+          git add articles.json
+          git commit -m "📰 每日更新：$TODAY - $TITLE"
+          git push
+
+      - name: 已有文章，跳過
+        if: steps.check.outputs.SKIP == 'true'
+        run: echo "今天 ${{ steps.check.outputs.TODAY }} 已有文章，跳過更新"
