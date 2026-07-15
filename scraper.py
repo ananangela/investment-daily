@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-新聞爬蟲 - 使用 RSS Feed 取得台灣財經新聞（穩定、不被封鎖）
+新聞爬蟲 - 使用 Yahoo股市官方 RSS Feed 取得台灣財經新聞（穩定、不被封鎖）
 """
 import requests
 import xml.etree.ElementTree as ET
-from datetime import datetime
 from typing import List, Optional
 import time
 import re
@@ -22,29 +21,21 @@ class NewsArticle:
 class NewsScraper:
     def __init__(self):
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (compatible; InvestmentDailyBot/1.0)',
-            'Accept': 'application/rss+xml, application/xml, text/xml, */*'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
         }
         self.keywords = ['台股', 'AI', '半導體', '記憶體', '晶片', 'ETF',
                          '聯發科', '台積電', '法人', '外資', '投信', '自營商',
-                         '漲停', '強勢', '主力', '產業', '概念股']
+                         '漲停', '強勢', '主力', '產業', '概念股', '大盤', '加權指數']
 
-        # RSS feed 來源（穩定、不需解析 HTML）
+        # Yahoo股市官方 RSS（穩定，官方提供，不易被擋）
         self.rss_sources = [
             {
-                'url': 'https://news.cnyes.com/rss/cat/tw_stock',
-                'name': '鉅亨網',
-                'source_url': 'https://news.cnyes.com'
+                'url': 'https://tw.stock.yahoo.com/rss?category=tw-market',
+                'name': 'Yahoo股市',
             },
             {
-                'url': 'https://news.cnyes.com/rss/cat/tw_etf',
-                'name': '鉅亨網ETF',
-                'source_url': 'https://news.cnyes.com'
-            },
-            {
-                'url': 'https://www.moneydj.com/rss/moneydj.aspx',
-                'name': 'MoneyDJ',
-                'source_url': 'https://www.moneydj.com'
+                'url': 'https://tw.stock.yahoo.com/rss?category=news',
+                'name': 'Yahoo股市',
             },
         ]
 
@@ -56,15 +47,12 @@ class NewsScraper:
             response.encoding = 'utf-8'
 
             root = ET.fromstring(response.content)
-            # 支援標準 RSS 2.0 格式
-            ns = {'content': 'http://purl.org/rss/1.0/modules/content/'}
             items = root.findall('.//item')
 
-            for item in items[:10]:
+            for item in items[:20]:
                 title = item.findtext('title', '').strip()
                 link = item.findtext('link', '').strip()
                 description = item.findtext('description', '').strip()
-                # 清除 HTML 標籤
                 description = re.sub(r'<[^>]+>', '', description)[:300]
 
                 if title and len(title) > 5:
@@ -72,11 +60,11 @@ class NewsScraper:
                         title=title,
                         summary=description,
                         source=source['name'],
-                        source_url=source['source_url'],
+                        source_url='https://tw.stock.yahoo.com',
                         article_url=link
                     ))
 
-            print(f"  {source['name']}: 取得 {len(articles)} 篇")
+            print(f"  {source['name']} ({source['url']}): 取得 {len(articles)} 篇")
         except Exception as e:
             print(f"  {source['name']} RSS 錯誤: {e}")
 
@@ -87,12 +75,9 @@ class NewsScraper:
         if not url:
             return ""
         try:
-            response = requests.get(url, headers={
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-            }, timeout=15)
+            response = requests.get(url, headers=self.headers, timeout=15)
             response.encoding = 'utf-8'
 
-            # 移除 script / style / tag
             text = re.sub(r'<script[^>]*>.*?</script>', '', response.text, flags=re.DOTALL)
             text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL)
             text = re.sub(r'<[^>]+>', ' ', text)
@@ -112,17 +97,21 @@ class NewsScraper:
             if keyword in title:
                 score += 10
 
-        # 加分項目
         if '台股' in title or '加權' in title:
             score += 5
         if 'AI' in title or '人工智慧' in title:
             score += 8
         if '台積電' in title or 'TSMC' in title:
             score += 6
-        if '法人' in title or '外資' in title:
+        if '法人' in title or '外資' in title or '投信' in title:
             score += 5
 
-        # 避開過於簡短或廣告性標題
+        # 避開純社會新聞/花邊（離婚、贈與稅等與投資學習較無關的標題）
+        noise_words = ['離婚', '監護權', '贈與稅', '婚後', '婚姻']
+        for w in noise_words:
+            if w in title:
+                score -= 30
+
         if len(title) < 10:
             score -= 20
 
@@ -144,7 +133,6 @@ class NewsScraper:
 
         print(f"共取得 {len(all_articles)} 篇，開始評分...")
 
-        # 評分排序
         for article in all_articles:
             article.score = self.score_article(article)
 
@@ -154,7 +142,6 @@ class NewsScraper:
         print(f"選中文章: {selected.title}")
         print(f"來源: {selected.source} | 評分: {selected.score}")
 
-        # 取得完整內容
         if selected.article_url:
             print("取得文章完整內容...")
             selected.content = self.fetch_article_content(selected.article_url)
