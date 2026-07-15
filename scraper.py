@@ -78,12 +78,30 @@ class NewsScraper:
             response = requests.get(url, headers=self.headers, timeout=15)
             response.encoding = 'utf-8'
 
-            text = re.sub(r'<script[^>]*>.*?</script>', '', response.text, flags=re.DOTALL)
-            text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL)
-            text = re.sub(r'<[^>]+>', ' ', text)
-            text = re.sub(r'\s+', ' ', text).strip()
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-            return text[:3000]
+            # 移除雜訊區塊（導覽列、頁尾、廣告、腳本等），只保留正文
+            for tag in soup(['script', 'style', 'nav', 'header', 'footer', 'aside', 'form', 'iframe']):
+                tag.decompose()
+            for tag in soup.find_all(attrs={'class': re.compile(r'(nav|menu|footer|sidebar|ad|banner|share|related|comment)', re.I)}):
+                tag.decompose()
+
+            # 優先抓文章主體常見容器，找不到再退回整個 body
+            article_body = (
+                soup.find('article')
+                or soup.find(attrs={'class': re.compile(r'(article|content|caas-body|story)', re.I)})
+                or soup.find('body')
+            )
+
+            if article_body:
+                paragraphs = article_body.find_all(['p', 'h1', 'h2', 'h3', 'li'])
+                text = '\n'.join(p.get_text(strip=True) for p in paragraphs if len(p.get_text(strip=True)) > 10)
+            else:
+                text = soup.get_text(separator='\n', strip=True)
+
+            text = re.sub(r'\n{2,}', '\n', text).strip()
+
+            return text[:6000]
         except Exception as e:
             print(f"  取得文章內容失敗: {e}")
             return ""

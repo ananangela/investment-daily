@@ -9,7 +9,7 @@ import requests
 from datetime import datetime
 
 GITHUB_MODELS_URL = "https://models.github.ai/inference/chat/completions"
-GITHUB_MODELS_MODEL = "openai/gpt-4o-mini"
+GITHUB_MODELS_MODEL = "openai/gpt-4o"  # 用完整版 gpt-4o（非 mini），品質更接近 Claude Opus 的原始水準
 
 
 def _call_github_models(prompt: str) -> str:
@@ -27,8 +27,8 @@ def _call_github_models(prompt: str) -> str:
         "messages": [
             {"role": "user", "content": prompt}
         ],
-        "temperature": 0.7,
-        "max_tokens": 2000,
+        "temperature": 0.8,
+        "max_tokens": 3500,
     }
 
     response = requests.post(GITHUB_MODELS_URL, headers=headers, json=payload, timeout=60)
@@ -52,7 +52,7 @@ def generate_article(news_data: dict) -> dict:
         print("錯誤：無法獲取文章內容")
         return None
 
-    prompt = f"""我需要你幫我分析以下投資新聞，並生成投資日報的內容。
+    prompt = f"""你是「投資日報」的專欄作者，專門把當日財經新聞改寫成給投資小白看的深度教學文章。你的讀者完全不懂股市術語，需要你把每個概念講到「聽得懂、記得住、學得會判斷」。
 
 【新聞標題】
 {title}
@@ -62,10 +62,10 @@ def generate_article(news_data: dict) -> dict:
 
 請以 JSON 格式回應，包含以下字段（務必是有效的 JSON，不要包含任何 markdown 標記）：
 {{
-  "headline": "新聞標題（20-30字，吸引人的版本）",
-  "deck": "新聞摘要（50-80字，概括重點）",
-  "summary": "詳細摘要（150-200字，包含 <strong> 標籤強調關鍵字）",
-  "keypoints": ["重點1（初學者視角，20-40字）", "重點2", "重點3", "重點4", "重點5"],
+  "headline": "新聞標題（20-35字，吸引人且包含具體數字）",
+  "deck": "新聞摘要（50-80字，概括重點，包含至少1個具體數字）",
+  "summary": "詳細摘要（180-250字，使用 <strong> 標籤密集強調關鍵數字、公司名稱、重要概念，至少標記5-6處）",
+  "keypoints": ["重點1", "重點2", "重點3", "重點4", "重點5"],
   "tags": [
     {{"t": "stock", "l": "個股"}},
     {{"t": "industry", "l": "產業名稱"}},
@@ -78,19 +78,30 @@ def generate_article(news_data: dict) -> dict:
       "name": "名詞1",
       "en": "English Name",
       "short": "簡短定義（20-30字）",
-      "full": "完整說明（80-120字）",
-      "eg": "💡 例子說明"
+      "full": "完整說明（100-150字）",
+      "eg": "💡 生活化比喻，用讀者日常經驗類比這個金融概念"
     }}
   ]
 }}
 
-重要規則：
-1. tags 應根據內容選擇最多3個，優先選 stock/etf/industry
-2. keypoints 應該有 5 個，避免冗長，使用簡白的財經術語
-3. terms 應該選 3-5 個最重要的名詞，每個名詞都要有詳細說明
-4. summary 中應使用 <strong> 標籤強調 2-3 個關鍵數字或概念
-5. 語氣應該適合初學投資者理解
-6. 完全禁止輸出 markdown 代碼塊或任何格式化符號，直接輸出 JSON"""
+品質標準（非常重要，請嚴格遵守，你的輸出會被拿去跟過去的高品質文章比較）：
+
+1. keypoints 每一點不是單純複述新聞事實，而是要「解讀意義」——說明這個現象代表什麼、對投資人有什麼啟示。範例對比：
+   - ❌ 差的寫法：「台積電上漲15元，帶動市場信心。」（只是複述數字）
+   - ✅ 好的寫法：「台積電漲15元領軍——護國神山續強代表外資對AI晶片需求信心不減，通常會帶動其他權值股跟漲。」（解讀+因果+啟示）
+   每一點應該是 30-60 字，包含「發生了什麼」+「為什麼重要/代表什麼」。
+
+2. terms 絕對不要選「台積電」「加權指數」「通膨」這種讀者早就知道的基本詞彙。應該選新聞中出現的、真正需要解釋的專業術語或市場黑話，例如：資金輪動、籌碼面、法人買超/賣超、本益比、除息填權、主力進出、產業鏈受惠、催化劑、評價調整、軋空等。如果新聞內容本身沒有專業術語，你可以選擇與新聞情境最相關的投資觀念名詞（例如「權值股」「成交量」「多頭排列」等），但仍要避開過於基礎的常識詞。
+   每個名詞的 full 說明要有 100-150 字，具體連結到今天新聞的情境（不要寫成通用教科書定義），並給初學者具體的行動啟示（該注意什麼、該怎麼做）。
+   eg 範例要用「生活化情境」做類比（吃飯、爬山、夜市、演唱會門票等），不要只是重複解釋一次名詞。
+
+3. summary 中的 <strong> 標籤要密集覆蓋所有關鍵數字（漲跌點數、百分比、股價、成交量）與重要名詞，讓讀者一眼掃過就能抓到重點，不要只標記1-2處。
+
+4. tags 應根據內容選擇最多3個，優先選 stock/etf/industry，industry 的 l 欄位要填具體產業名稱（如「半導體」「面板」）而非「產業」兩字。
+
+5. 完全禁止輸出 markdown 代碼塊或任何格式化符號，直接輸出 JSON。
+
+6. 如果新聞內容資訊量較少，你仍然要主動延伸：可以補充該產業/公司的背景脈絡、與其他相關新聞的關聯、對大盤的可能影響，讓文章保持應有的深度，不要因為原始新聞短就交出空泛的內容。"""
 
     print(f"正在使用 GitHub Models（{GITHUB_MODELS_MODEL}）生成文章內容...")
 
