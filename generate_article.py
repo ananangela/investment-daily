@@ -1,16 +1,45 @@
 #!/usr/bin/env python3
 """
-使用 Claude API 生成投資日報文章
+使用 GitHub Models（免費 AI 推論）生成投資日報文章
+文件: https://docs.github.com/en/github-models
 """
+import os
 import json
+import requests
 from datetime import datetime
-from anthropic import Anthropic
 
-client = Anthropic()
+GITHUB_MODELS_URL = "https://models.github.ai/inference/chat/completions"
+GITHUB_MODELS_MODEL = "openai/gpt-4o-mini"
+
+
+def _call_github_models(prompt: str) -> str:
+    """呼叫 GitHub Models API（免費，使用 GITHUB_TOKEN 認證）"""
+    token = os.environ.get("GITHUB_TOKEN")
+    if not token:
+        raise RuntimeError("找不到 GITHUB_TOKEN 環境變數，請確認 workflow 已設定")
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": GITHUB_MODELS_MODEL,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.7,
+        "max_tokens": 2000,
+    }
+
+    response = requests.post(GITHUB_MODELS_URL, headers=headers, json=payload, timeout=60)
+    response.raise_for_status()
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
+
 
 def generate_article(news_data: dict) -> dict:
     """
-    根據爬蟲取得的新聞內容，使用 Claude 生成完整的投資日報文章
+    根據爬蟲取得的新聞內容，使用 GitHub Models 生成完整的投資日報文章
     """
 
     title = news_data.get('title', '')
@@ -23,7 +52,6 @@ def generate_article(news_data: dict) -> dict:
         print("錯誤：無法獲取文章內容")
         return None
 
-    # 第一步：生成摘要、重點和名詞解釋
     prompt = f"""我需要你幫我分析以下投資新聞，並生成投資日報的內容。
 
 【新聞標題】
@@ -32,7 +60,7 @@ def generate_article(news_data: dict) -> dict:
 【新聞內容】
 {content}
 
-請以 JSON 格式回應，包含以下字段（務必是有效的 JSON）：
+請以 JSON 格式回應，包含以下字段（務必是有效的 JSON，不要包含任何 markdown 標記）：
 {{
   "headline": "新聞標題（20-30字，吸引人的版本）",
   "deck": "新聞摘要（50-80字，概括重點）",
@@ -41,7 +69,7 @@ def generate_article(news_data: dict) -> dict:
   "tags": [
     {{"t": "stock", "l": "個股"}},
     {{"t": "industry", "l": "產業名稱"}},
-    {{"t": "etf", "l": "ETF"}} 或其他
+    {{"t": "etf", "l": "ETF"}}
   ],
   "difficulty": "beginner 或 intermediate",
   "difficultyLabel": "初級 或 進階",
@@ -64,19 +92,12 @@ def generate_article(news_data: dict) -> dict:
 5. 語氣應該適合初學投資者理解
 6. 完全禁止輸出 markdown 代碼塊或任何格式化符號，直接輸出 JSON"""
 
-    print("正在使用 Claude 生成文章內容...")
+    print(f"正在使用 GitHub Models（{GITHUB_MODELS_MODEL}）生成文章內容...")
 
-    response = client.messages.create(
-        model="claude-opus-4-8",
-        max_tokens=2000,
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
-
-    response_text = response.content[0].text
+    response_text = _call_github_models(prompt)
 
     # 清理 JSON（移除可能的 markdown 包裝）
+    response_text = response_text.strip()
     if response_text.startswith('```'):
         response_text = response_text.split('```')[1]
         if response_text.startswith('json'):
@@ -90,10 +111,8 @@ def generate_article(news_data: dict) -> dict:
         print(f"原始回應: {response_text[:500]}")
         return None
 
-    # 取得今天的日期
     today = datetime.now().strftime('%Y-%m-%d')
 
-    # 組合最終文章數據
     article = {
         "headline": article_data.get('headline', title),
         "deck": article_data.get('deck', ''),
@@ -114,11 +133,11 @@ def generate_article(news_data: dict) -> dict:
         "article_url": article_url
     }
 
+
 def update_articles_json(new_article_data: dict):
     """
     將新文章添加到 articles.json
     """
-    # 讀取現有數據
     try:
         with open('articles.json', 'r', encoding='utf-8') as f:
             articles = json.load(f)
@@ -128,40 +147,35 @@ def update_articles_json(new_article_data: dict):
     date = new_article_data['date']
     article = new_article_data['article']
 
-    # 檢查日期是否已存在
     if date in articles:
         print(f"警告：{date} 已有文章，將被覆蓋")
 
     articles[date] = article
 
-    # 寫入文件
     with open('articles.json', 'w', encoding='utf-8') as f:
         json.dump(articles, f, ensure_ascii=False, indent=2)
 
     print(f"✓ 文章已保存到 articles.json: {date}")
     return articles
 
+
 def main():
-    # 讀取爬蟲的輸出
     import sys
     if len(sys.argv) > 1:
-        # 從命令行參數讀取
         news_data = json.loads(sys.argv[1])
     else:
-        # 從標準輸入讀取（用於管道）
         news_data = json.load(sys.stdin)
 
-    # 生成文章
     result = generate_article(news_data)
 
     if result:
-        # 更新 JSON 文件
         update_articles_json(result)
         print("完成！")
         return result
     else:
         print("生成失敗")
         return None
+
 
 if __name__ == '__main__':
     main()
