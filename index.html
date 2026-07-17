@@ -601,17 +601,31 @@ function buildHTML(d, key){
       <span class="kp-num">${i+1}</span>
       <span class="kp-txt">${k}</span>
     </li>`).join('');
-  const termsHTML = d.terms.map(t => `
+  const termsHTML = d.terms.map(t => {
+    // 防禦性處理：AI 有時會把 💡 比喻直接寫進 full 欄位、沒有輸出獨立的 eg 欄位。
+    // 這裡自動偵測並拆分，避免畫面顯示出字面上的 "undefined"。
+    let fullTxt = t.full || '';
+    let egTxt = t.eg || '';
+    if (!egTxt) {
+      const idx = fullTxt.indexOf('💡');
+      if (idx !== -1) {
+        egTxt = fullTxt.slice(idx + 1).trim();
+        fullTxt = fullTxt.slice(0, idx).trim();
+      }
+    }
+    const egBlock = egTxt ? `<div class="term-eg">💡 ${egTxt}</div>` : '';
+    return `
     <div class="term-card" onclick="toggleTerm(this)">
       <div class="term-name">${t.name}</div>
       <div class="term-en">${t.en}</div>
       <div class="term-short">${t.short}</div>
       <div class="term-full">
-        <p class="term-full-txt">${t.full}</p>
-        <div class="term-eg">💡 ${t.eg}</div>
+        <p class="term-full-txt">${fullTxt}</p>
+        ${egBlock}
       </div>
       <div class="term-hint">↓ 點擊展開</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   const archiveHTML = buildArchiveCards(key);
 

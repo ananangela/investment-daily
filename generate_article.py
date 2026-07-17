@@ -12,6 +12,27 @@ GITHUB_MODELS_URL = "https://models.github.ai/inference/chat/completions"
 GITHUB_MODELS_MODEL = "openai/gpt-4o"  # 用完整版 gpt-4o（非 mini），品質更接近 Claude Opus 的原始水準
 
 
+def _fix_missing_eg(terms: list) -> None:
+    """
+    修正 AI 有時不遵守格式、把 💡 比喻直接寫進 full 欄位、沒有輸出獨立 eg 欄位的問題。
+    就地修改傳入的 terms 陣列，確保每個 term 都有 eg 欄位，避免前端顯示出字面上的 "undefined"。
+    """
+    for term in terms:
+        eg = (term.get('eg') or '').strip()
+        full = term.get('full') or ''
+
+        if eg:
+            continue  # 已經有正常的 eg，不需處理
+
+        if '💡' in full:
+            idx = full.index('💡')
+            term['full'] = full[:idx].strip()
+            term['eg'] = full[idx + 1:].strip()
+        else:
+            # 完全沒有比喻內容時，給一個保底文字，避免欄位空白或顯示 undefined
+            term['eg'] = '（可對照上方說明理解這個概念）'
+
+
 def _call_github_models(prompt: str) -> str:
     """呼叫 GitHub Models API（免費，使用 GITHUB_TOKEN 認證）"""
     token = os.environ.get("GITHUB_TOKEN")
@@ -124,6 +145,9 @@ def generate_article(news_data: dict) -> dict:
 
     today = datetime.now().strftime('%Y-%m-%d')
 
+    terms = article_data.get('terms', [])
+    _fix_missing_eg(terms)
+
     article = {
         "headline": article_data.get('headline', title),
         "deck": article_data.get('deck', ''),
@@ -135,7 +159,7 @@ def generate_article(news_data: dict) -> dict:
         "tags": article_data.get('tags', [{"t": "stock", "l": "個股"}]),
         "summary": article_data.get('summary', ''),
         "keypoints": article_data.get('keypoints', []),
-        "terms": article_data.get('terms', [])
+        "terms": terms
     }
 
     return {
