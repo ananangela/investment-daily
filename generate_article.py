@@ -53,7 +53,9 @@ def _call_gemini(prompt: str) -> str:
         ],
         "generationConfig": {
             "temperature": 0.8,
-            "maxOutputTokens": 3500,
+            # 較新的 Gemini Flash 模型預設會先「思考」再回答，思考產生的 token 也算在
+            # maxOutputTokens 額度裡，所以要給足夠大的上限，避免正文被截斷導致 JSON 解析失敗。
+            "maxOutputTokens": 8192,
         },
     }
 
@@ -61,7 +63,13 @@ def _call_gemini(prompt: str) -> str:
     response.raise_for_status()
     data = response.json()
     try:
-        return data["candidates"][0]["content"]["parts"][0]["text"]
+        candidate = data["candidates"][0]
+        finish_reason = candidate.get("finishReason")
+        if finish_reason == "MAX_TOKENS":
+            raise RuntimeError(
+                f"Gemini 回應被截斷（finishReason=MAX_TOKENS），請提高 maxOutputTokens。原始回應: {data}"
+            )
+        return candidate["content"]["parts"][0]["text"]
     except (KeyError, IndexError) as e:
         raise RuntimeError(f"Gemini 回應格式異常，無法取得文字內容: {data}") from e
 
@@ -148,7 +156,8 @@ def generate_article(news_data: dict) -> dict:
         article_data = json.loads(response_text)
     except json.JSONDecodeError as e:
         print(f"JSON 解析錯誤: {e}")
-        print(f"原始回應: {response_text[:500]}")
+        print(f"原始回應長度: {len(response_text)} 字元")
+        print(f"原始回應: {response_text[:2000]}")
         return None
 
     today = datetime.now().strftime('%Y-%m-%d')
