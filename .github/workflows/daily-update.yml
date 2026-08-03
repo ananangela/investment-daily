@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  models: read  # 允許呼叫 GitHub Models（免費 AI 推論）
 
 jobs:
   update:
@@ -43,7 +42,7 @@ jobs:
       - name: 執行更新腳本
         if: steps.check.outputs.SKIP == 'false'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python3 update_daily.py
 
