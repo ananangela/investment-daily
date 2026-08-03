@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """
-使用 GitHub Models（免費 AI 推論）生成投資日報文章
-文件: https://docs.github.com/en/github-models
+使用 Google Gemini API（免費額度）生成投資日報文章
+文件: https://ai.google.dev/api
+
+註：原本使用 GitHub Models（免費 AI 推論），但該服務已於 2026-07-30 全面退役
+（https://github.blog/changelog/2026-07-30-github-models-is-now-retired/），
+因此改用 Gemini API 作為替代。
 """
 import os
 import json
 import requests
 from datetime import datetime
 
-GITHUB_MODELS_URL = "https://models.github.ai/inference/chat/completions"
-GITHUB_MODELS_MODEL = "openai/gpt-4o"  # 用完整版 gpt-4o（非 mini），品質更接近 Claude Opus 的原始水準
+GEMINI_MODEL = "gemini-flash-latest"  # 官方別名，自動指向最新版 Flash 模型，避免未來版本退役又要改程式碼
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 
 def _fix_missing_eg(terms: list) -> None:
@@ -33,34 +37,38 @@ def _fix_missing_eg(terms: list) -> None:
             term['eg'] = '（可對照上方說明理解這個概念）'
 
 
-def _call_github_models(prompt: str) -> str:
-    """呼叫 GitHub Models API（免費，使用 GITHUB_TOKEN 認證）"""
-    token = os.environ.get("GITHUB_TOKEN")
-    if not token:
-        raise RuntimeError("找不到 GITHUB_TOKEN 環境變數，請確認 workflow 已設定")
+def _call_gemini(prompt: str) -> str:
+    """呼叫 Gemini API（免費額度，使用 GEMINI_API_KEY 認證）"""
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("找不到 GEMINI_API_KEY 環境變數，請確認 workflow / repo secrets 已設定")
 
     headers = {
-        "Authorization": f"Bearer {token}",
+        "x-goog-api-key": api_key,
         "Content-Type": "application/json",
     }
     payload = {
-        "model": GITHUB_MODELS_MODEL,
-        "messages": [
-            {"role": "user", "content": prompt}
+        "contents": [
+            {"parts": [{"text": prompt}]}
         ],
-        "temperature": 0.8,
-        "max_tokens": 3500,
+        "generationConfig": {
+            "temperature": 0.8,
+            "maxOutputTokens": 3500,
+        },
     }
 
-    response = requests.post(GITHUB_MODELS_URL, headers=headers, json=payload, timeout=60)
+    response = requests.post(GEMINI_URL, headers=headers, json=payload, timeout=60)
     response.raise_for_status()
     data = response.json()
-    return data["choices"][0]["message"]["content"]
+    try:
+        return data["candidates"][0]["content"]["parts"][0]["text"]
+    except (KeyError, IndexError) as e:
+        raise RuntimeError(f"Gemini 回應格式異常，無法取得文字內容: {data}") from e
 
 
 def generate_article(news_data: dict) -> dict:
     """
-    根據爬蟲取得的新聞內容，使用 GitHub Models 生成完整的投資日報文章
+    根據爬蟲取得的新聞內容，使用 Gemini 生成完整的投資日報文章
     """
 
     title = news_data.get('title', '')
@@ -124,9 +132,9 @@ def generate_article(news_data: dict) -> dict:
 
 6. 如果新聞內容資訊量較少，你仍然要主動延伸：可以補充該產業/公司的背景脈絡、與其他相關新聞的關聯、對大盤的可能影響，讓文章保持應有的深度，不要因為原始新聞短就交出空泛的內容。"""
 
-    print(f"正在使用 GitHub Models（{GITHUB_MODELS_MODEL}）生成文章內容...")
+    print(f"正在使用 Gemini（{GEMINI_MODEL}）生成文章內容...")
 
-    response_text = _call_github_models(prompt)
+    response_text = _call_gemini(prompt)
 
     # 清理 JSON（移除可能的 markdown 包裝）
     response_text = response_text.strip()

@@ -32,8 +32,8 @@ def main():
         'content': article.content
     }
 
-    # Step 2: 使用 Claude 生成文章
-    print("\n[2/3] 使用 Claude 生成分析...")
+    # Step 2: 使用 Gemini 生成文章
+    print("\n[2/3] 使用 Gemini 生成分析...")
     result = generate_article(news_data)
 
     if not result:
