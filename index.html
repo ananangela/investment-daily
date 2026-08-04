@@ -682,7 +682,7 @@ function buildHTML(d, key){
 }
 
 function buildArchiveCards(exceptKey){
-  const filtered = [...DAYS].reverse()
+  const filtered = [...DAYS]
     .filter(k => k !== exceptKey)
     .filter(k => currentFilter === 'all' || DATA[k].tags.some(t => t.t === currentFilter));
 
